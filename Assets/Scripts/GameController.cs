@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameController : MonoBehaviour
+internal class GameController : MonoBehaviour
 {
-    public static GameController Instance;
+    internal static GameController Instance;
 
     internal ScoreController ScoreController;
 
@@ -34,18 +34,18 @@ public class GameController : MonoBehaviour
         Init();
     }
 
-    public void ShowNewGameScreen() {}
+    internal void ShowNewGameScreen() {}
 
-    public void LaunchBall(float force)
+    internal void LaunchBall(float force)
     {
         _stateMachine.GoToState(GameState.GameProcess);
     }
 
-    public void MoveLeftFlipper() {}
+    internal void MoveLeftFlipper() {}
 
-    public void MoveRightFlipper() {}
+    internal void MoveRightFlipper() {}
 
-    public void UpdateScores() {}
+    internal void UpdateScores() {}
 
     private void Init()
     {
@@ -65,7 +65,7 @@ public class GameController : MonoBehaviour
     }
 }
 
-public enum Side
+internal enum Side
 {
     Left, Right
 }

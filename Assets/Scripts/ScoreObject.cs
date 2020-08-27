@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class ScoreObject : MonoBehaviour
+internal class ScoreObject : MonoBehaviour
 {
     [SerializeField] private int ScoreAmount;
 

@@ -1,9 +1,6 @@
-
-using System;
-
-public class GameProcessState : BaseState
+internal class GameProcessState : BaseState
 {
-    public override GameState State => GameState.GameProcess;
+    internal override GameState State => GameState.GameProcess;
 
     private void MoveFlipper(Side side, float _)
     {

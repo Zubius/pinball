@@ -1,15 +1,14 @@
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class StateMachine
+internal class StateMachine
 {
-    private Dictionary<GameState, BaseState> _states;
+    private readonly Dictionary<GameState, BaseState> _states;
     private BaseState _currentState;
 
-    public StateMachine(Dictionary<GameState, BaseState> states)
+    internal StateMachine(Dictionary<GameState, BaseState> states)
     {
         _states = states.ToDictionary(
             s => s.Key,
@@ -17,7 +16,7 @@ public class StateMachine
             new EnumComparer<GameState>());
     }
 
-    public void GoToState(GameState toState)
+    internal void GoToState(GameState toState)
     {
         if (_states.TryGetValue(toState, out var nextState))
         {
@@ -33,7 +32,7 @@ public class StateMachine
     }
 }
 
-public class EnumComparer<TEnum> : IEqualityComparer<TEnum> where TEnum : Enum
+internal class EnumComparer<TEnum> : IEqualityComparer<TEnum> where TEnum : Enum
 {
     public bool Equals(TEnum x, TEnum y)
     {

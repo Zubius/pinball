@@ -1,9 +1,9 @@
 
-public class LaunchBallState : BaseState
+internal class LaunchBallState : BaseState
 {
-    public override GameState State => GameState.LaunchBall;
+    internal override GameState State => GameState.LaunchBall;
 
-    public override void OnStateExit()
+    internal override void OnStateExit()
     {
         GameController.Instance.LaunchBall(42);
     }

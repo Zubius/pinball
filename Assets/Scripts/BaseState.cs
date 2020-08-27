@@ -2,18 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BaseState
+internal class BaseState
 {
-    public virtual GameState State { get; }
+    internal virtual GameState State { get; }
 
-    public virtual void OnStateEnter() {}
+    internal virtual void OnStateEnter() {}
 
-    public virtual void HandleInput() {}
+    internal virtual void HandleInput() {}
 
-    public virtual void OnStateExit() {}
+    internal virtual void OnStateExit() {}
 }
 
-public enum GameState
+internal enum GameState
 {
     LaunchBall,
     GameProcess,

@@ -1,9 +1,8 @@
-
-public class LoseBallState : BaseState
+internal class LoseBallState : BaseState
 {
-    public override GameState State => GameState.LoseBall;
+    internal override GameState State => GameState.LoseBall;
 
-    public override void OnStateEnter()
+    internal override void OnStateEnter()
     {
         GameController.Instance.ShowNewGameScreen();
     }
