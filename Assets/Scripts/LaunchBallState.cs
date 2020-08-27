@@ -5,6 +5,6 @@ internal class LaunchBallState : BaseState
 
     internal override void OnStateExit()
     {
-        GameController.Instance.LaunchBall(42);
+        GameController.Instance.LaunchBall(1);
     }
 }

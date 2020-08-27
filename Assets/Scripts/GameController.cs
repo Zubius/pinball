@@ -4,6 +4,9 @@ using UnityEngine;
 
 internal class GameController : MonoBehaviour
 {
+    [SerializeField] private DropBallController dropBallController;
+    [SerializeField] private LaunchBallController launchBallController;
+
     internal static GameController Instance;
 
     internal ScoreController ScoreController;
@@ -31,6 +34,11 @@ internal class GameController : MonoBehaviour
 
         ScoreController = new ScoreController();
 
+        EnsureComponentExists(dropBallController);
+        EnsureComponentExists(launchBallController);
+
+        dropBallController.OnBallDropped += OnBallDropped;
+
         Init();
     }
 
@@ -38,7 +46,7 @@ internal class GameController : MonoBehaviour
 
     internal void LaunchBall(float force)
     {
-        _stateMachine.GoToState(GameState.GameProcess);
+        launchBallController.LaunchBall(force);
     }
 
     internal void MoveLeftFlipper() {}
@@ -57,11 +65,29 @@ internal class GameController : MonoBehaviour
     private void OnBallDropped()
     {
         _stateMachine.GoToState(GameState.LoseBall);
+
+        //TODO debug
+        OnStartPressed();
     }
 
     private void OnStartPressed()
     {
         _stateMachine.GoToState(GameState.LaunchBall);
+
+        //TODO debug
+        _stateMachine.GoToState(GameState.GameProcess);
+    }
+
+    private void EnsureComponentExists<T>(T component) where T : MonoBehaviour
+    {
+        if (component == null)
+        {
+            component = FindObjectOfType<T>();
+            if (component == null)
+            {
+                Debug.LogError($"No {nameof(T)} Found!");
+            }
+        }
     }
 }
 
