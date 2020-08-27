@@ -15,7 +15,6 @@ public class BaseState
 
 public enum GameState
 {
-    None = 0,
     LaunchBall,
     GameProcess,
     LoseBall,

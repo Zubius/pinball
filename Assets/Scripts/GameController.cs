@@ -6,6 +6,8 @@ public class GameController : MonoBehaviour
 {
     public static GameController Instance;
 
+    internal ScoreController ScoreController;
+
     private StateMachine _stateMachine;
 
     private void Awake()
@@ -26,5 +28,44 @@ public class GameController : MonoBehaviour
                 [GameState.LoseBall] = new LoseBallState(),
             }
         );
+
+        ScoreController = new ScoreController();
+
+        Init();
     }
+
+    public void ShowNewGameScreen() {}
+
+    public void LaunchBall(float force)
+    {
+        _stateMachine.GoToState(GameState.GameProcess);
+    }
+
+    public void MoveLeftFlipper() {}
+
+    public void MoveRightFlipper() {}
+
+    public void UpdateScores() {}
+
+    private void Init()
+    {
+        OnBallDropped();
+        ScoreController.SaveScores();
+        ScoreController.Reset();
+    }
+
+    private void OnBallDropped()
+    {
+        _stateMachine.GoToState(GameState.LoseBall);
+    }
+
+    private void OnStartPressed()
+    {
+        _stateMachine.GoToState(GameState.LaunchBall);
+    }
+}
+
+public enum Side
+{
+    Left, Right
 }
