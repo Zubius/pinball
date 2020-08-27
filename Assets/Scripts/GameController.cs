@@ -19,7 +19,7 @@ public class GameController : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(this);
 
-        _stateMachine = new StateMachine(new Dictionary<GameState, BaseState>(new GameStateComparer())
+        _stateMachine = new StateMachine(new Dictionary<GameState, BaseState>(new EnumComparer<GameState>())
             {
                 [GameState.LaunchBall] = new LaunchBallState(),
                 [GameState.GameProcess] = new GameProcessState(),
