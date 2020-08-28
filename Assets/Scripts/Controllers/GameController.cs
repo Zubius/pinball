@@ -9,10 +9,13 @@ internal class GameController : MonoBehaviour
     [SerializeField] private Flipper leftFlipper;
     [SerializeField] private Flipper rightFlipper;
 
+    [SerializeField] private int initBallsCount = 2;
+
     internal static GameController Instance;
 
     internal ScoreController ScoreController;
     internal IInputSource InputSource;
+    internal BallsController BallsController;
 
     private StateMachine _stateMachine;
     private Ball _ball;
@@ -36,6 +39,7 @@ internal class GameController : MonoBehaviour
         Instance = this;
 
         ScoreController = new ScoreController();
+        BallsController = new BallsController(initBallsCount);
 
         EnsureComponentExists(dropBallController);
         EnsureComponentExists(launchBallController);
@@ -73,9 +77,9 @@ internal class GameController : MonoBehaviour
 
     internal void ShowNewGameScreen() {}
 
-    internal void LaunchBall(float force)
+    internal void LaunchBall(BallType type, float force)
     {
-        launchBallController.LaunchBall(force);
+        launchBallController.LaunchBall(type, force);
     }
 
     internal void UpdateScores() {}

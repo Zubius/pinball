@@ -7,6 +7,8 @@ internal class Ball : MonoBehaviour
     [SerializeField] private Transform cachedTransform;
     [SerializeField] private Rigidbody cachedRigidbody;
 
+    [SerializeField] internal BallType type = BallType.Simple;
+
     private void Awake()
     {
         if (cachedTransform == null)

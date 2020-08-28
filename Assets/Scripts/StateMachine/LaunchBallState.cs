@@ -1,7 +1,11 @@
 
+using UnityEngine;
+
 internal class LaunchBallState : BaseState
 {
     internal override GameState State => GameState.LaunchBall;
+
+    private readonly BallType[] _ballTypes = {BallType.Simple};
 
     internal override void OnStateEnter()
     {
@@ -18,6 +22,9 @@ internal class LaunchBallState : BaseState
     private void OnLaunchBallReleased(float duration)
     {
         if (duration > 0)
-            Controller.LaunchBall(duration);
+        {
+            Controller.BallsController.DecrementBallsCount();
+            Controller.LaunchBall(_ballTypes[Random.Range(0, _ballTypes.Length - 1)], duration);
+        }
     }
 }
