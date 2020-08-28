@@ -9,6 +9,9 @@ internal class LaunchBallState : BaseState
     internal override void OnStateEnter()
     {
         Controller.InputSource.OnLaunchReleased += OnLaunchBallReleased;
+        Controller.BallsController.DecrementBallsCount();
+        Controller.UpdateBallsLeft(Controller.BallsController.BallsCount);
+        Controller.HideStartScreen();
     }
 
     internal override void OnStateExit()
@@ -22,7 +25,6 @@ internal class LaunchBallState : BaseState
     {
         if (duration > 0)
         {
-            Controller.BallsController.DecrementBallsCount();
             Controller.LaunchBall(_ballTypes[Random.Range(0, _ballTypes.Length - 1)], duration);
         }
     }

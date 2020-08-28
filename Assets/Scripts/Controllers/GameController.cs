@@ -5,6 +5,7 @@ internal class GameController : MonoBehaviour
 {
     [SerializeField] private DropBallController dropBallController;
     [SerializeField] private LaunchBallController launchBallController;
+    [SerializeField] private UIController uiController;
     [SerializeField] private Flipper leftFlipper;
     [SerializeField] private Flipper rightFlipper;
 
@@ -46,6 +47,7 @@ internal class GameController : MonoBehaviour
         EnsureComponentExists(launchBallController);
         EnsureComponentExists(leftFlipper);
         EnsureComponentExists(rightFlipper);
+        EnsureComponentExists(uiController);
 
         switch (_inputSourceTypeType)
         {
@@ -76,14 +78,30 @@ internal class GameController : MonoBehaviour
         Init();
     }
 
-    internal void ShowNewGameScreen() {}
+    internal void ShowNewGameScreen(int topScores)
+    {
+        uiController.ShowStartScreenWithTopScores(topScores);
+    }
+
+    internal void HideStartScreen()
+    {
+        uiController.HideStartScreen();
+    }
 
     internal void LaunchBall(BallType type, float force)
     {
         launchBallController.LaunchBall(type, force);
     }
 
-    internal void UpdateScores() {}
+    internal void UpdateScores(int scores)
+    {
+        uiController.SetCurrentScores(scores);
+    }
+
+    internal void UpdateBallsLeft(int count)
+    {
+        uiController.SetBallsLeft(count);
+    }
 
     internal void MoveLeftFlipper(FlipperDirection direction)
     {

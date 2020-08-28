@@ -38,7 +38,7 @@ internal class GameProcessState : BaseState
 
     private void UpdateGameScores()
     {
-        Controller.UpdateScores();
+        Controller.UpdateScores(Controller.GameScoreController.CurrentScores);
     }
 
     public GameProcessState(GameController controller) : base(controller) { }
