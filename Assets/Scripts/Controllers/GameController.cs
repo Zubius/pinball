@@ -55,7 +55,6 @@ internal class GameController : MonoBehaviour
                 InputSource = Instantiate(Resources.Load<KeyboardInputHandler>("KeyboardInputHandler"), this.transform.parent);
                 break;
             case InputSourceType.Touch:
-                InputSource = Instantiate(Resources.Load<TouchInputHandler>("TouchInputHandler"), this.transform.parent);
                 var touchEventHandler = Instantiate(Resources.Load<TouchInputHandler>("TouchInputHandler"), this.transform.parent);
                 InputSource = touchEventHandler;
                 uiController.SetStartButtonAction(touchEventHandler.OnStartButtonPressed);
