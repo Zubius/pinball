@@ -56,6 +56,13 @@ internal class GameController : MonoBehaviour
                 break;
             case InputSourceType.Touch:
                 InputSource = Instantiate(Resources.Load<TouchInputHandler>("TouchInputHandler"), this.transform.parent);
+                var touchEventHandler = Instantiate(Resources.Load<TouchInputHandler>("TouchInputHandler"), this.transform.parent);
+                InputSource = touchEventHandler;
+                uiController.SetStartButtonAction(touchEventHandler.OnStartButtonPressed);
+                uiController.SetEventTrigger(Side.Left, FlipperDirection.Up, touchEventHandler.OnLeftReleased);
+                uiController.SetEventTrigger(Side.Left, FlipperDirection.Down, touchEventHandler.OnLeftPressed);
+                uiController.SetEventTrigger(Side.Right, FlipperDirection.Up, touchEventHandler.OnRightReleased);
+                uiController.SetEventTrigger(Side.Right, FlipperDirection.Down, touchEventHandler.OnRightPressed);
                 break;
             case InputSourceType.AI:
                 InputSource = new AIInputHandler();
