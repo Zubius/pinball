@@ -16,6 +16,7 @@ internal class GameController : MonoBehaviour
     internal ScoreController ScoreController;
     internal IInputSource InputSource;
     internal BallsController BallsController;
+    internal ScoreObjectController ScoreObjectController;
 
     private StateMachine _stateMachine;
     private Ball _ball;
@@ -40,6 +41,7 @@ internal class GameController : MonoBehaviour
 
         ScoreController = new ScoreController();
         BallsController = new BallsController(initBallsCount);
+        ScoreObjectController = new ScoreObjectController();
 
         EnsureComponentExists(dropBallController);
         EnsureComponentExists(launchBallController);

@@ -7,6 +7,12 @@ internal class GameProcessState : BaseState
     {
         Controller.InputSource.OnFlipperAction += MoveFlipper;
         Controller.ScoreController.OnScoreChanged += UpdateScores;
+        Controller.ScoreObjectController.OnScored += OnScored;
+    }
+
+    private void OnScored(ScoreObjectType type, int scores)
+    {
+        Controller.ScoreController.AddScores(scores);
     }
 
     internal override void OnStateExit()
