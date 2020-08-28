@@ -1,10 +1,13 @@
 
+using System;
 using UnityEngine;
 
 internal class ScoreController
 {
     internal int CurrentScores { get; private set; }
     internal int TopScores { get; private set; }
+
+    internal event Action OnScoreChanged;
 
     private readonly string _topScoresKey = "top_scores";
     private bool _topScoresUpdated;
@@ -38,5 +41,7 @@ internal class ScoreController
             TopScores = CurrentScores;
             _topScoresUpdated = true;
         }
+
+        OnScoreChanged?.Invoke();
     }
 }
