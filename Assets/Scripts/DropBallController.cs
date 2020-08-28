@@ -5,7 +5,7 @@ internal class DropBallController : MonoBehaviour
 {
     internal event Action OnBallDropped;
 
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerExit(Collider other)
     {
         OnBallDropped?.Invoke();
     }

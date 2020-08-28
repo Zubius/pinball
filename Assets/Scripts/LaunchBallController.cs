@@ -1,18 +1,20 @@
+using System;
+using JetBrains.Annotations;
 using UnityEngine;
 
 internal class LaunchBallController : MonoBehaviour
 {
     [SerializeField] private Transform launchPoint;
 
-    private Ball _ball;
+    internal event Action<Ball> OnBallLaunched;
 
     internal void LaunchBall(float force)
     {
-        if (_ball == null)
-            _ball = Instantiate(Resources.Load<Ball>("Ball"));
+        var ball = Instantiate(Resources.Load<Ball>("Ball"));
 
-        _ball.transform.position = launchPoint.position;
-        //TODO debug
-        // _ball.Launch(force);
+        ball.transform.position = launchPoint.position;
+
+        ball.Launch(force);
+        OnBallLaunched?.Invoke(ball);
     }
 }

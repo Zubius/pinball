@@ -12,6 +12,7 @@ internal class GameController : MonoBehaviour
     internal ScoreController ScoreController;
 
     private StateMachine _stateMachine;
+    private Ball _ball;
 
     private void Awake()
     {
@@ -38,6 +39,7 @@ internal class GameController : MonoBehaviour
         EnsureComponentExists(launchBallController);
 
         dropBallController.OnBallDropped += OnBallDropped;
+        launchBallController.OnBallLaunched += OnBallLaunched;
 
         Init();
     }
@@ -64,18 +66,26 @@ internal class GameController : MonoBehaviour
 
     private void OnBallDropped()
     {
+        if (_ball != null)
+        {
+            Destroy(_ball.gameObject);
+        }
+
         _stateMachine.GoToState(GameState.LoseBall);
 
         //TODO debug
         OnStartPressed();
     }
 
+    private void OnBallLaunched(Ball ball)
+    {
+        _ball = ball;
+        _stateMachine.GoToState(GameState.GameProcess);
+    }
+
     private void OnStartPressed()
     {
         _stateMachine.GoToState(GameState.LaunchBall);
-
-        //TODO debug
-        _stateMachine.GoToState(GameState.GameProcess);
     }
 
     private void EnsureComponentExists<T>(T component) where T : MonoBehaviour
