@@ -2,7 +2,7 @@
 using System;
 using UnityEngine;
 
-internal class ScoreController
+internal class GameScoreController
 {
     internal int CurrentScores { get; private set; }
     internal int TopScores { get; private set; }
@@ -12,7 +12,7 @@ internal class ScoreController
     private readonly string _topScoresKey = "top_scores";
     private bool _topScoresUpdated;
 
-    internal ScoreController()
+    internal GameScoreController()
     {
         TopScores = PlayerPrefs.GetInt(_topScoresKey, 0);
         CurrentScores = 0;

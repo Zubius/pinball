@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -13,7 +12,7 @@ internal class GameController : MonoBehaviour
 
     internal static GameController Instance;
 
-    internal ScoreController ScoreController;
+    internal GameScoreController GameScoreController;
     internal IInputSource InputSource;
     internal BallsController BallsController;
     internal ScoreObjectController ScoreObjectController;
@@ -39,7 +38,7 @@ internal class GameController : MonoBehaviour
 
         Instance = this;
 
-        ScoreController = new ScoreController();
+        GameScoreController = new GameScoreController();
         BallsController = new BallsController(initBallsCount);
         ScoreObjectController = new ScoreObjectController();
 
@@ -112,8 +111,8 @@ internal class GameController : MonoBehaviour
     private void Init()
     {
         OnBallDropped();
-        ScoreController.SaveScores();
-        ScoreController.Reset();
+        GameScoreController.SaveScores();
+        GameScoreController.Reset();
     }
 
     private void OnBallDropped()
