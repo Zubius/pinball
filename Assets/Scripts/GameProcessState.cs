@@ -2,21 +2,36 @@ internal class GameProcessState : BaseState
 {
     internal override GameState State => GameState.GameProcess;
 
-    private void MoveFlipper(Side side, float _)
+
+    internal override void OnStateEnter()
+    {
+        Controller.InputSource.OnFlipperAction += MoveFlipper;
+    }
+
+    internal override void OnStateExit()
+    {
+        Controller.MoveLeftFlipper(FlipperDirection.Down);
+        Controller.MoveRightFlipper(FlipperDirection.Down);
+        Controller.InputSource.OnFlipperAction -= MoveFlipper;
+    }
+
+    private void MoveFlipper(Side side, FlipperDirection direction)
     {
         switch (side)
         {
             case Side.Left:
-                GameController.Instance.MoveLeftFlipper();
+                Controller.MoveLeftFlipper(direction);
                 break;
             case Side.Right:
-                GameController.Instance.MoveRightFlipper();
+                Controller.MoveRightFlipper(direction);
                 break;
         }
     }
 
     private void UpdateScores()
     {
-        GameController.Instance.UpdateScores();
+        Controller.UpdateScores();
     }
+
+    public GameProcessState(GameController controller) : base(controller) { }
 }

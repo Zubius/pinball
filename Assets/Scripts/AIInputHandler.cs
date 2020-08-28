@@ -1,7 +1,6 @@
 using System;
-using UnityEngine;
 
-internal class TouchInputHandler : MonoBehaviour, IInputSource
+internal class AIInputHandler : IInputSource
 {
     public event Action<float> OnLaunchReleased;
 

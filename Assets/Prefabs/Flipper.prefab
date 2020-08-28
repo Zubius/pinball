@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 6203386673036734661}
   - component: {fileID: 6203386673036734660}
   - component: {fileID: 6203386673036734663}
+  - component: {fileID: -8256412915626412787}
   m_Layer: 0
   m_Name: Flipper
   m_TagString: Untagged
@@ -130,7 +131,7 @@ HingeJoint:
     targetPosition: 0
   m_UseMotor: 1
   m_Motor:
-    targetVelocity: -500
+    targetVelocity: 0
     force: 10000
     freeSpin: 0
   m_UseLimits: 1
@@ -144,5 +145,20 @@ HingeJoint:
   m_BreakTorque: Infinity
   m_EnableCollision: 0
   m_EnablePreprocessing: 1
-  m_MassScale: 1
+  m_MassScale: 1000000
   m_ConnectedMassScale: 1
+--- !u!114 &-8256412915626412787
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6203386673036734662}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5db574e9d5104d95acb7c22743605f44, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  velocity: 500
+  cachedHingeJoint: {fileID: 6203386673036734663}
+  side: 0

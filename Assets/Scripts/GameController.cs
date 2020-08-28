@@ -6,16 +6,27 @@ internal class GameController : MonoBehaviour
 {
     [SerializeField] private DropBallController dropBallController;
     [SerializeField] private LaunchBallController launchBallController;
+    [SerializeField] private Flipper leftFlipper;
+    [SerializeField] private Flipper rightFlipper;
 
     internal static GameController Instance;
 
     internal ScoreController ScoreController;
+    internal IInputSource InputSource;
 
     private StateMachine _stateMachine;
     private Ball _ball;
 
+    private InputSourceType _inputSourceTypeType;
+
     private void Awake()
     {
+        #if UNITY_EDITOR || UNITY_STANDALONE
+        _inputSourceTypeType = InputSourceType.Keyboard;
+        #elif UNITY_IOS || UNITY_ANDROID
+        _inputSourceTypeType = InputSourceType.Touch;
+        #endif
+
         if (Instance != null)
         {
             DestroyImmediate(this);
@@ -23,20 +34,36 @@ internal class GameController : MonoBehaviour
         }
 
         Instance = this;
-        DontDestroyOnLoad(this);
-
-        _stateMachine = new StateMachine(new Dictionary<GameState, BaseState>(new EnumComparer<GameState>())
-            {
-                [GameState.LaunchBall] = new LaunchBallState(),
-                [GameState.GameProcess] = new GameProcessState(),
-                [GameState.LoseBall] = new LoseBallState(),
-            }
-        );
 
         ScoreController = new ScoreController();
 
         EnsureComponentExists(dropBallController);
         EnsureComponentExists(launchBallController);
+        EnsureComponentExists(leftFlipper);
+        EnsureComponentExists(rightFlipper);
+
+        switch (_inputSourceTypeType)
+        {
+            case InputSourceType.Keyboard:
+                InputSource = Instantiate(Resources.Load<KeyboardInputHandler>("KeyboardInputHandler"), this.transform.parent);
+                break;
+            case InputSourceType.Touch:
+                InputSource = Instantiate(Resources.Load<TouchInputHandler>("TouchInputHandler"), this.transform.parent);
+                break;
+            case InputSourceType.AI:
+                InputSource = new AIInputHandler();
+                break;
+        }
+
+        InputSource.OnStartPressed += OnStartPressed;
+
+        _stateMachine = new StateMachine(new Dictionary<GameState, BaseState>(new EnumComparer<GameState>())
+            {
+                [GameState.LaunchBall] = new LaunchBallState(this),
+                [GameState.GameProcess] = new GameProcessState(this),
+                [GameState.LoseBall] = new LoseBallState(this),
+            }
+        );
 
         dropBallController.OnBallDropped += OnBallDropped;
         launchBallController.OnBallLaunched += OnBallLaunched;
@@ -51,11 +78,30 @@ internal class GameController : MonoBehaviour
         launchBallController.LaunchBall(force);
     }
 
-    internal void MoveLeftFlipper() {}
-
-    internal void MoveRightFlipper() {}
-
     internal void UpdateScores() {}
+
+    internal void MoveLeftFlipper(FlipperDirection direction)
+    {
+        MoveFlipper(leftFlipper, direction);
+    }
+
+    internal void MoveRightFlipper(FlipperDirection direction)
+    {
+        MoveFlipper(rightFlipper, direction);
+    }
+
+    private void MoveFlipper(Flipper flipper, FlipperDirection direction)
+    {
+        switch (direction)
+        {
+            case FlipperDirection.Up:
+                flipper.Up();
+                break;
+            case FlipperDirection.Down:
+                flipper.Down();
+                break;
+        }
+    }
 
     private void Init()
     {
@@ -72,9 +118,6 @@ internal class GameController : MonoBehaviour
         }
 
         _stateMachine.GoToState(GameState.LoseBall);
-
-        //TODO debug
-        OnStartPressed();
     }
 
     private void OnBallLaunched(Ball ball)
@@ -103,5 +146,7 @@ internal class GameController : MonoBehaviour
 
 internal enum Side
 {
-    Left, Right
+    None = 0,
+    Left,
+    Right
 }

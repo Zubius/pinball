@@ -2,13 +2,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-internal class BaseState
+internal abstract class BaseState
 {
+    protected readonly GameController Controller;
+    
+    internal BaseState(GameController controller)
+    {
+        Controller = controller;
+    }
+
     internal virtual GameState State { get; }
 
     internal virtual void OnStateEnter() {}
 
-    internal virtual void HandleInput() {}
 
     internal virtual void OnStateExit() {}
 }

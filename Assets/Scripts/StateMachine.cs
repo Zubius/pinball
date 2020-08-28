@@ -24,6 +24,7 @@ internal class StateMachine
 
             _currentState = nextState;
             _currentState.OnStateEnter();
+            Debug.Log($"Enter state: {_currentState.State}");
         }
         else
         {

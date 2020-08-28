@@ -4,6 +4,8 @@ internal class LoseBallState : BaseState
 
     internal override void OnStateEnter()
     {
-        GameController.Instance.ShowNewGameScreen();
+        Controller.ShowNewGameScreen();
     }
+
+    public LoseBallState(GameController controller) : base(controller) { }
 }
