@@ -15,8 +15,11 @@ internal class UIController : MonoBehaviour
     [SerializeField] private GameObject endScreen;
     [SerializeField] private Button startButton;
     [SerializeField] private Button restartButton;
+    [SerializeField] private Toggle aiToggle;
     [SerializeField] private EventTrigger leftTrigger;
     [SerializeField] private EventTrigger rightTrigger;
+
+    internal bool AIToggleIsON => aiToggle.isOn;
 
     internal void SetTopScores(Text textObject, int topScores)
     {

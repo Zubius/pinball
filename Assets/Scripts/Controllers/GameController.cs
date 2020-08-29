@@ -60,10 +60,6 @@ internal class GameController : MonoBehaviour
                 uiController.SetEventTrigger(Side.Right, FlipperDirection.Up, touchEventHandler.OnRightReleased);
                 uiController.SetEventTrigger(Side.Right, FlipperDirection.Down, touchEventHandler.OnRightPressed);
                 break;
-            case InputSourceType.AI:
-                var aiController = Instantiate(Resources.Load<AIInputHandler>("AIController"), this.transform.parent);
-                inputSource = aiController;
-                break;
         }
 
         inputSource.OnStartPressed += OnStartPressed;
@@ -169,6 +165,11 @@ internal class GameController : MonoBehaviour
 
     private void OnStartPressed()
     {
+        if (uiController.AIToggleIsON)
+        {
+            var aiController = Instantiate(Resources.Load<AIInputHandler>("AIController"), this.transform.parent);
+            DataController.InputSource = aiController;
+        }
         _stateMachine.GoToState(GameState.LaunchBall);
     }
 
