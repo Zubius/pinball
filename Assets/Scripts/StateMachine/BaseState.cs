@@ -21,6 +21,7 @@ internal abstract class BaseState
 
 internal enum GameState
 {
+    StartGame,
     LaunchBall,
     GameProcess,
     LoseBall,

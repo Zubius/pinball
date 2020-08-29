@@ -62,11 +62,11 @@ internal class GameController : MonoBehaviour
                 break;
         }
 
-        inputSource.OnStartPressed += OnStartPressed;
         DataController.Init(inputSource, scoreObjectController, initBallsCount);
 
         _stateMachine = new StateMachine(new Dictionary<GameState, BaseState>(new EnumComparer<GameState>())
             {
+                [GameState.StartGame] = new StartGameState(this),
                 [GameState.LaunchBall] = new LaunchBallState(this),
                 [GameState.GameProcess] = new GameProcessState(this),
                 [GameState.LoseBall] = new LoseBallState(this),
@@ -82,6 +82,11 @@ internal class GameController : MonoBehaviour
     internal void ShowNewGameScreen(int topScores)
     {
         uiController.ShowStartScreenWithTopScores(topScores, _inputSourceType == InputSourceType.Touch);
+    }
+
+    internal void PlatNextBall()
+    {
+        StartGame();
     }
 
     internal void ShowEndGameScreen(int topScores, int currentScores)
@@ -139,7 +144,7 @@ internal class GameController : MonoBehaviour
 
     private void Init()
     {
-        OnBallDropped();
+        _stateMachine.GoToState(GameState.StartGame);
     }
 
     internal void ReloadScene()
@@ -163,7 +168,7 @@ internal class GameController : MonoBehaviour
         _stateMachine.GoToState(GameState.GameProcess);
     }
 
-    private void OnStartPressed()
+    internal void StartGame()
     {
         if (uiController.AIToggleIsON)
         {

@@ -23,8 +23,8 @@ internal class StateMachine
             _currentState?.OnStateExit();
 
             _currentState = nextState;
-            _currentState.OnStateEnter();
             Debug.Log($"Enter state: {_currentState.State}");
+            _currentState.OnStateEnter();
         }
         else
         {
