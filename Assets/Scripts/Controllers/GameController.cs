@@ -23,7 +23,7 @@ internal class GameController : MonoBehaviour
     private void Awake()
     {
         #if UNITY_EDITOR || UNITY_STANDALONE
-        _inputSourceType = InputSourceType.Touch;
+        _inputSourceType = InputSourceType.Keyboard;
         #elif UNITY_IOS || UNITY_ANDROID
         _inputSourceType = InputSourceType.Touch;
         #endif
