@@ -28,6 +28,11 @@ internal class UIController : MonoBehaviour
         startButton.onClick.AddListener(new UnityAction(startAction));
     }
 
+    internal void SetRestartButtonAction(Action startAction)
+    {
+        restartButton.onClick.AddListener(new UnityAction(startAction));
+    }
+
     internal void SetEventTrigger(Side side, FlipperDirection direction, Action action)
     {
         switch (side)

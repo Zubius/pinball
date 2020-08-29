@@ -23,7 +23,7 @@ internal class GameController : MonoBehaviour
     private void Awake()
     {
         #if UNITY_EDITOR || UNITY_STANDALONE
-        _inputSourceType = InputSourceType.Keyboard;
+        _inputSourceType = InputSourceType.Touch;
         #elif UNITY_IOS || UNITY_ANDROID
         _inputSourceType = InputSourceType.Touch;
         #endif
@@ -54,6 +54,7 @@ internal class GameController : MonoBehaviour
                 var touchEventHandler = Instantiate(Resources.Load<TouchInputHandler>("TouchInputHandler"), this.transform.parent);
                 inputSource = touchEventHandler;
                 uiController.SetStartButtonAction(touchEventHandler.OnStartButtonPressed);
+                uiController.SetRestartButtonAction(touchEventHandler.OnRestartGame);
                 uiController.SetEventTrigger(Side.Left, FlipperDirection.Up, touchEventHandler.OnLeftReleased);
                 uiController.SetEventTrigger(Side.Left, FlipperDirection.Down, touchEventHandler.OnLeftPressed);
                 uiController.SetEventTrigger(Side.Right, FlipperDirection.Up, touchEventHandler.OnRightReleased);
