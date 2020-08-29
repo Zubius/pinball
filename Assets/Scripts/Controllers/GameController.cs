@@ -25,7 +25,7 @@ internal class GameController : MonoBehaviour
         #if UNITY_EDITOR || UNITY_STANDALONE
         _inputSourceType = InputSourceType.Keyboard;
         #elif UNITY_IOS || UNITY_ANDROID
-        _inputSourceTypeType = InputSourceType.Touch;
+        _inputSourceType = InputSourceType.Touch;
         #endif
 
         if (Instance != null)
