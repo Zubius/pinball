@@ -18,9 +18,9 @@ internal class UIController : MonoBehaviour
     [SerializeField] private EventTrigger leftTrigger;
     [SerializeField] private EventTrigger rightTrigger;
 
-    internal void SetTopScores(int topScores)
+    internal void SetTopScores(Text textObject, int topScores)
     {
-        topScoresText.text = $"Top Scores: {topScores.ToString()}";
+        textObject.text = $"Top Scores: {topScores.ToString()}";
     }
 
     internal void SetStartButtonAction(Action startAction)
@@ -81,7 +81,7 @@ internal class UIController : MonoBehaviour
 
     internal void ShowStartScreenWithTopScores(int topScores, bool showButton)
     {
-        SetTopScores(topScores);
+        SetTopScores(topScoresText, topScores);
         ShowStartScreen();
 
         startButton.gameObject.SetActive(showButton);
@@ -89,7 +89,7 @@ internal class UIController : MonoBehaviour
 
     internal void ShowEndGameScreen(int topScores, int currentScores, bool showButton)
     {
-        SetTopScores(topScores);
+        SetTopScores(topScoresEndGameText,topScores);
         finalScores.text = $"Final Scores: {currentScores.ToString()}";
         restartButton.gameObject.SetActive(showButton);
         ShowEndScreen();
