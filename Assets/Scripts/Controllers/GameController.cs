@@ -61,7 +61,8 @@ internal class GameController : MonoBehaviour
                 uiController.SetEventTrigger(Side.Right, FlipperDirection.Down, touchEventHandler.OnRightPressed);
                 break;
             case InputSourceType.AI:
-                inputSource = new AIInputHandler();
+                var aiController = Instantiate(Resources.Load<AIInputHandler>("AIController"), this.transform.parent);
+                inputSource = aiController;
                 break;
         }
 

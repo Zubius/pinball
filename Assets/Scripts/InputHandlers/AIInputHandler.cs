@@ -11,7 +11,7 @@ internal class AIInputHandler : MonoBehaviour, IInputSource
     private readonly WaitForSeconds _startWaiter = new WaitForSeconds(2);
     private readonly WaitForSeconds _flipperWaiter = new WaitForSeconds(0.2f);
 
-    private IEnumerator Awake()
+    private IEnumerator Start()
     {
         leftTrigger.OnTriggered += LeftTriggerOnOnTriggered;
         rightTrigger.OnTriggered += RightTriggerOnOnTriggered;
@@ -38,11 +38,9 @@ internal class AIInputHandler : MonoBehaviour, IInputSource
 
     private IEnumerator StartGame()
     {
-        OnStartPressed?.Invoke();
-
         yield return _startWaiter;
 
-        OnLaunchReleased?.Invoke(1f);
+        OnLaunchReleased?.Invoke(0.7f);
     }
 
     private IEnumerator MoveFlipper(Side side)
