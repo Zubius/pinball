@@ -6,6 +6,7 @@ internal interface IInputSource
     event Action<float> OnLaunchReleased;
     event Action<Side, FlipperDirection> OnFlipperAction;
     event Action OnStartPressed;
+    event Action OnRestartPressed;
 }
 
 internal enum InputSourceType

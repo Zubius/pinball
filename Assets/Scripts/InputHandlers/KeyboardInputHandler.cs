@@ -8,7 +8,8 @@ internal class KeyboardInputHandler : MonoBehaviour, IInputSource
     public event Action<Side, FlipperDirection> OnFlipperAction;
 
     public event Action OnStartPressed;
-    
+    public event Action OnRestartPressed;
+
 
     private float _holdStartTime = 0;
 
@@ -35,6 +36,9 @@ internal class KeyboardInputHandler : MonoBehaviour, IInputSource
 
             else if (Input.GetKeyUp(KeyCode.T))
                 OnStartPressed?.Invoke();
+
+            else if (Input.GetKeyUp(KeyCode.R))
+                OnRestartPressed?.Invoke();
         }
     }
 

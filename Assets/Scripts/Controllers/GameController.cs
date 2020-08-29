@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 internal class GameController : MonoBehaviour
 {
@@ -21,12 +22,12 @@ internal class GameController : MonoBehaviour
     private StateMachine _stateMachine;
     private Ball _ball;
 
-    private InputSourceType _inputSourceTypeType;
+    private InputSourceType _inputSourceType;
 
     private void Awake()
     {
         #if UNITY_EDITOR || UNITY_STANDALONE
-        _inputSourceTypeType = InputSourceType.Keyboard;
+        _inputSourceType = InputSourceType.Keyboard;
         #elif UNITY_IOS || UNITY_ANDROID
         _inputSourceTypeType = InputSourceType.Touch;
         #endif
@@ -49,7 +50,7 @@ internal class GameController : MonoBehaviour
         EnsureComponentExists(rightFlipper);
         EnsureComponentExists(uiController);
 
-        switch (_inputSourceTypeType)
+        switch (_inputSourceType)
         {
             case InputSourceType.Keyboard:
                 InputSource = Instantiate(Resources.Load<KeyboardInputHandler>("KeyboardInputHandler"), this.transform.parent);
@@ -86,7 +87,14 @@ internal class GameController : MonoBehaviour
 
     internal void ShowNewGameScreen(int topScores)
     {
-        uiController.ShowStartScreenWithTopScores(topScores);
+        uiController.ShowStartScreenWithTopScores(topScores, _inputSourceType == InputSourceType.Touch);
+    }
+
+    internal void ShowEndGameScreen(int topScores, int currentScores)
+    {
+        GameScoreController.SaveScores();
+        uiController.ShowEndGameScreen(topScores, currentScores, _inputSourceType == InputSourceType.Touch);
+        InputSource.OnRestartPressed += ReloadScene;
     }
 
     internal void HideStartScreen()
@@ -135,8 +143,12 @@ internal class GameController : MonoBehaviour
     private void Init()
     {
         OnBallDropped();
-        GameScoreController.SaveScores();
         GameScoreController.Reset();
+    }
+
+    private void ReloadScene()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     private void OnBallDropped()

@@ -3,14 +3,19 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using UnityEngine.WSA;
 
 internal class UIController : MonoBehaviour
 {
     [SerializeField] private Text topScoresText;
     [SerializeField] private Text currentScores;
+    [SerializeField] private Text finalScores;
+    [SerializeField] private Text topScoresEndGameText;
     [SerializeField] private Text ballsLeft;
     [SerializeField] private GameObject startScreen;
+    [SerializeField] private GameObject endScreen;
     [SerializeField] private Button startButton;
+    [SerializeField] private Button restartButton;
     [SerializeField] private EventTrigger leftTrigger;
     [SerializeField] private EventTrigger rightTrigger;
 
@@ -55,6 +60,11 @@ internal class UIController : MonoBehaviour
         trigger.triggers.Add(entry);
     }
 
+    internal void BindRestartButton(Action restartAction)
+    {
+        restartButton.onClick.AddListener(new UnityAction(restartAction));
+    }
+
     internal void SetCurrentScores(int scores)
     {
         currentScores.text = $"Scores:\n{scores.ToString()}";
@@ -65,21 +75,42 @@ internal class UIController : MonoBehaviour
         ballsLeft.text = $"Balls left:\n{count}";
     }
 
-    internal void ShowStartScreenWithTopScores(int topScores)
+    internal void ShowStartScreenWithTopScores(int topScores, bool showButton)
     {
         SetTopScores(topScores);
-        ShowStartScreen(true);
+        ShowStartScreen();
+
+        startButton.gameObject.SetActive(showButton);
+    }
+
+    internal void ShowEndGameScreen(int topScores, int currentScores, bool showButton)
+    {
+        SetTopScores(topScores);
+        finalScores.text = $"Final Scores: {currentScores.ToString()}";
+        restartButton.gameObject.SetActive(showButton);
+        ShowEndScreen();
     }
 
     internal void HideStartScreen()
     {
-        ShowStartScreen(false);
+        ShowScreen(startScreen, false);
     }
 
-    private void ShowStartScreen(bool enabled)
+    private void ShowStartScreen()
     {
-        if (startScreen.activeSelf != enabled)
-            startScreen.SetActive(enabled);
+        ShowScreen(startScreen, true);
+        ShowScreen(endScreen, false);
+    }
+
+    private void ShowEndScreen()
+    {
+        ShowScreen(endScreen, true);
+    }
+
+    private void ShowScreen(GameObject screen, bool enabled)
+    {
+        if (screen.activeSelf != enabled)
+            screen.SetActive(enabled);
     }
 
 

@@ -8,9 +8,15 @@ internal class TouchInputHandler : MonoBehaviour, IInputSource
     public event Action<Side, FlipperDirection> OnFlipperAction;
 
     public event Action OnStartPressed;
+    public event Action OnRestartPressed;
 
     private float _pressedTime = 0;
     private int _holdTouchesCount = 0;
+
+    internal void OnRestartGame()
+    {
+        OnRestartPressed?.Invoke();
+    }
 
     internal void OnStartButtonPressed()
     {

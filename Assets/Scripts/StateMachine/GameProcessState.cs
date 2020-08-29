@@ -21,6 +21,7 @@ internal class GameProcessState : BaseState
         Controller.MoveRightFlipper(FlipperDirection.Down);
         Controller.InputSource.OnFlipperAction -= MoveFlipper;
         Controller.GameScoreController.OnScoreChanged -= UpdateGameScores;
+        Controller.ScoreObjectController.OnScored -= OnScored;
     }
 
     private void MoveFlipper(Side side, FlipperDirection direction)
