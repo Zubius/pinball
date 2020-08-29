@@ -3,9 +3,9 @@ using UnityEngine;
 
 internal class BaseScoreObject : MonoBehaviour
 {
-    [SerializeField] private int scoreAmount;
-    [SerializeField] private float additionalForce;
-    [SerializeField] private ScoreObjectType type = ScoreObjectType.Simple;
+    [SerializeField] protected int scoreAmount;
+    [SerializeField] protected float additionalForce = 1;
+    [SerializeField] protected ScoreObjectType type = ScoreObjectType.Simple;
 
     protected virtual void OnCollisionEnter(Collision ball)
     {
@@ -14,8 +14,8 @@ internal class BaseScoreObject : MonoBehaviour
         {
             GameController.Instance.ScoreObjectController.ScoreObject(type, scoreAmount);
 
-            Debug.DrawRay(ball.contacts[0].point, ball.contacts[0].normal);
-            ballRigidbody.AddForce(additionalForce * ball.contacts[0].normal);
+            Debug.DrawRay(ball.contacts[0].point, ball.contacts[0].normal * additionalForce * -1);
+            ballRigidbody.AddForce(additionalForce * ball.contacts[0].normal * -1);
         }
     }
 }
