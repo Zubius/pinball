@@ -8,15 +8,15 @@ internal class LaunchBallState : BaseState
 
     internal override void OnStateEnter()
     {
-        Controller.InputSource.OnLaunchReleased += OnLaunchBallReleased;
-        Controller.BallsController.DecrementBallsCount();
-        Controller.UpdateBallsLeft(Controller.BallsController.BallsCount);
+        DataController.InputSource.OnLaunchReleased += OnLaunchBallReleased;
+        DataController.BallsController.DecrementBallsCount();
+        Controller.UpdateBallsLeft(DataController.BallsController.BallsCount);
         Controller.HideStartScreen();
     }
 
     internal override void OnStateExit()
     {
-        Controller.InputSource.OnLaunchReleased -= OnLaunchBallReleased;
+        DataController.InputSource.OnLaunchReleased -= OnLaunchBallReleased;
     }
 
     public LaunchBallState(GameController controller) : base(controller) { }

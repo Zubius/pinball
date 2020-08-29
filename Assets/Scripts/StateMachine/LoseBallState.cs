@@ -4,10 +4,21 @@ internal class LoseBallState : BaseState
 
     internal override void OnStateEnter()
     {
-        if (Controller.BallsController.BallsCount > 0)
-            Controller.ShowNewGameScreen(Controller.GameScoreController.TopScores);
+        if (DataController.BallsController.BallsCount > 0)
+            Controller.ShowNewGameScreen(DataController.GameScoreController.TopScores);
         else
-            Controller.ShowEndGameScreen(Controller.GameScoreController.TopScores, Controller.GameScoreController.CurrentScores);
+        {
+            Controller.ShowEndGameScreen(DataController.GameScoreController.TopScores,
+                DataController.GameScoreController.CurrentScores);
+            DataController.GameScoreController.SaveScores();
+            DataController.InputSource.OnRestartPressed += OnRestart;
+        }
+    }
+
+    private void OnRestart()
+    {
+        DataController.Dispose();
+        Controller.ReloadScene();
     }
 
     public LoseBallState(GameController controller) : base(controller) { }

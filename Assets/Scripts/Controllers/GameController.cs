@@ -6,6 +6,7 @@ internal class GameController : MonoBehaviour
 {
     [SerializeField] private DropBallController dropBallController;
     [SerializeField] private LaunchBallController launchBallController;
+    [SerializeField] private ScoreObjectController scoreObjectController;
     [SerializeField] private UIController uiController;
     [SerializeField] private Flipper leftFlipper;
     [SerializeField] private Flipper rightFlipper;
@@ -13,11 +14,6 @@ internal class GameController : MonoBehaviour
     [SerializeField] private int initBallsCount = 2;
 
     internal static GameController Instance;
-
-    internal GameScoreController GameScoreController;
-    internal IInputSource InputSource;
-    internal BallsController BallsController;
-    internal ScoreObjectController ScoreObjectController;
 
     private StateMachine _stateMachine;
     private Ball _ball;
@@ -40,24 +36,23 @@ internal class GameController : MonoBehaviour
 
         Instance = this;
 
-        GameScoreController = new GameScoreController();
-        BallsController = new BallsController(initBallsCount);
-        ScoreObjectController = new ScoreObjectController();
-
         EnsureComponentExists(dropBallController);
         EnsureComponentExists(launchBallController);
+        EnsureComponentExists(scoreObjectController);
         EnsureComponentExists(leftFlipper);
         EnsureComponentExists(rightFlipper);
         EnsureComponentExists(uiController);
 
+        IInputSource inputSource = null;
+
         switch (_inputSourceType)
         {
             case InputSourceType.Keyboard:
-                InputSource = Instantiate(Resources.Load<KeyboardInputHandler>("KeyboardInputHandler"), this.transform.parent);
+                inputSource = Instantiate(Resources.Load<KeyboardInputHandler>("KeyboardInputHandler"), this.transform.parent);
                 break;
             case InputSourceType.Touch:
                 var touchEventHandler = Instantiate(Resources.Load<TouchInputHandler>("TouchInputHandler"), this.transform.parent);
-                InputSource = touchEventHandler;
+                inputSource = touchEventHandler;
                 uiController.SetStartButtonAction(touchEventHandler.OnStartButtonPressed);
                 uiController.SetEventTrigger(Side.Left, FlipperDirection.Up, touchEventHandler.OnLeftReleased);
                 uiController.SetEventTrigger(Side.Left, FlipperDirection.Down, touchEventHandler.OnLeftPressed);
@@ -65,11 +60,12 @@ internal class GameController : MonoBehaviour
                 uiController.SetEventTrigger(Side.Right, FlipperDirection.Down, touchEventHandler.OnRightPressed);
                 break;
             case InputSourceType.AI:
-                InputSource = new AIInputHandler();
+                inputSource = new AIInputHandler();
                 break;
         }
 
-        InputSource.OnStartPressed += OnStartPressed;
+        inputSource.OnStartPressed += OnStartPressed;
+        DataController.Init(inputSource, scoreObjectController, initBallsCount);
 
         _stateMachine = new StateMachine(new Dictionary<GameState, BaseState>(new EnumComparer<GameState>())
             {
@@ -92,14 +88,17 @@ internal class GameController : MonoBehaviour
 
     internal void ShowEndGameScreen(int topScores, int currentScores)
     {
-        GameScoreController.SaveScores();
         uiController.ShowEndGameScreen(topScores, currentScores, _inputSourceType == InputSourceType.Touch);
-        InputSource.OnRestartPressed += ReloadScene;
     }
 
     internal void HideStartScreen()
     {
         uiController.HideStartScreen();
+    }
+
+    internal void ScoreObject(ScoreObjectType type, int scores)
+    {
+        scoreObjectController.ScoreObject(type, scores);
     }
 
     internal void LaunchBall(BallType type, float force)
@@ -143,10 +142,9 @@ internal class GameController : MonoBehaviour
     private void Init()
     {
         OnBallDropped();
-        GameScoreController.Reset();
     }
 
-    private void ReloadScene()
+    internal void ReloadScene()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }

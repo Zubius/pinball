@@ -12,7 +12,7 @@ internal class BaseScoreObject : MonoBehaviour
         var ballRigidbody = ball.gameObject.GetComponent<Rigidbody>();
         if (ballRigidbody != null)
         {
-            GameController.Instance.ScoreObjectController.ScoreObject(type, scoreAmount);
+            GameController.Instance.ScoreObject(type, scoreAmount);
 
             Debug.DrawRay(ball.contacts[0].point, ball.contacts[0].normal * additionalForce * -1);
             ballRigidbody.AddForce(additionalForce * ball.contacts[0].normal * -1);

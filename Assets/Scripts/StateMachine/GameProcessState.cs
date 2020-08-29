@@ -5,23 +5,23 @@ internal class GameProcessState : BaseState
 
     internal override void OnStateEnter()
     {
-        Controller.InputSource.OnFlipperAction += MoveFlipper;
-        Controller.GameScoreController.OnScoreChanged += UpdateGameScores;
-        Controller.ScoreObjectController.OnScored += OnScored;
+        DataController.InputSource.OnFlipperAction += MoveFlipper;
+        DataController.GameScoreController.OnScoreChanged += UpdateGameScores;
+        DataController.ScoreObjectController.OnScored += OnScored;
     }
 
     private void OnScored(ScoreObjectType type, int scores)
     {
-        Controller.GameScoreController.AddScores(scores);
+        DataController.GameScoreController.AddScores(scores);
     }
 
     internal override void OnStateExit()
     {
         Controller.MoveLeftFlipper(FlipperDirection.Down);
         Controller.MoveRightFlipper(FlipperDirection.Down);
-        Controller.InputSource.OnFlipperAction -= MoveFlipper;
-        Controller.GameScoreController.OnScoreChanged -= UpdateGameScores;
-        Controller.ScoreObjectController.OnScored -= OnScored;
+        DataController.InputSource.OnFlipperAction -= MoveFlipper;
+        DataController.GameScoreController.OnScoreChanged -= UpdateGameScores;
+        DataController.ScoreObjectController.OnScored -= OnScored;
     }
 
     private void MoveFlipper(Side side, FlipperDirection direction)
@@ -39,7 +39,7 @@ internal class GameProcessState : BaseState
 
     private void UpdateGameScores()
     {
-        Controller.UpdateScores(Controller.GameScoreController.CurrentScores);
+        Controller.UpdateScores(DataController.GameScoreController.CurrentScores);
     }
 
     public GameProcessState(GameController controller) : base(controller) { }

@@ -5,7 +5,7 @@ using UnityEngine;
 internal abstract class BaseState
 {
     protected readonly GameController Controller;
-    
+
     internal BaseState(GameController controller)
     {
         Controller = controller;
