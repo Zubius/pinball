@@ -104,8 +104,7 @@ internal class UIController : MonoBehaviour
         SetTopScores(topScoresEndGameText,topScores);
         finalScores.SetText($"Final Scores: {currentScores.ToString()}");
         restartButton.gameObject.SetActive(showButton);
-        if (!showButton)
-            endGameInfo.SetText(_endGameInfo);
+        endGameInfo.enabled = !showButton;
         ShowEndScreen();
     }
 
@@ -123,7 +122,10 @@ internal class UIController : MonoBehaviour
     private void OnAiToggled(bool toggled)
     {
         if (startButton.gameObject.activeSelf)
+        {
+            startGameInfo.enabled = !toggled;
             return;
+        }
 
         startGameInfo.SetText(toggled ? _startGameKeyboardInfoStart : $"{_startGameKeyboardInfoStart}\n{_startGameKeyboardInfoGame}");
     }
