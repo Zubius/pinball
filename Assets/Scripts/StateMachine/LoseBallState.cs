@@ -8,9 +8,9 @@ internal class LoseBallState : BaseState
             Controller.ShowNewGameScreen(DataController.GameScoreController.TopScores);
         else
         {
+            DataController.GameScoreController.SaveScores();
             Controller.ShowEndGameScreen(DataController.GameScoreController.TopScores,
                 DataController.GameScoreController.CurrentScores);
-            DataController.GameScoreController.SaveScores();
             DataController.InputSource.OnRestartPressed += OnRestart;
         }
     }
