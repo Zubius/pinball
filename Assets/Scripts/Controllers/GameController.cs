@@ -17,6 +17,7 @@ internal class GameController : MonoBehaviour
 
     private StateMachine _stateMachine;
     private Ball _ball;
+    private IInputSource _initInputSource;
 
     private InputSourceType _inputSourceType;
 
@@ -43,26 +44,24 @@ internal class GameController : MonoBehaviour
         EnsureComponentExists(rightFlipper);
         EnsureComponentExists(uiController);
 
-        IInputSource inputSource = null;
-
         switch (_inputSourceType)
         {
             case InputSourceType.Keyboard:
-                inputSource = Instantiate(Resources.Load<KeyboardInputHandler>("KeyboardInputHandler"), this.transform.parent);
+                _initInputSource = Instantiate(Resources.Load<KeyboardInputHandler>("KeyboardInputHandler"), this.transform.parent);
                 break;
             case InputSourceType.Touch:
                 var touchEventHandler = Instantiate(Resources.Load<TouchInputHandler>("TouchInputHandler"), this.transform.parent);
-                inputSource = touchEventHandler;
+                _initInputSource = touchEventHandler;
                 uiController.SetStartButtonAction(touchEventHandler.OnStartButtonPressed);
                 uiController.SetRestartButtonAction(touchEventHandler.OnRestartGame);
-                uiController.SetEventTrigger(Side.Left, FlipperDirection.Up, touchEventHandler.OnLeftReleased);
-                uiController.SetEventTrigger(Side.Left, FlipperDirection.Down, touchEventHandler.OnLeftPressed);
-                uiController.SetEventTrigger(Side.Right, FlipperDirection.Up, touchEventHandler.OnRightReleased);
-                uiController.SetEventTrigger(Side.Right, FlipperDirection.Down, touchEventHandler.OnRightPressed);
+                uiController.SetEventTrigger(Side.Left, FlipperDirection.Up, touchEventHandler.OnLeftPressed);
+                uiController.SetEventTrigger(Side.Left, FlipperDirection.Down, touchEventHandler.OnLeftReleased);
+                uiController.SetEventTrigger(Side.Right, FlipperDirection.Up, touchEventHandler.OnRightPressed);
+                uiController.SetEventTrigger(Side.Right, FlipperDirection.Down, touchEventHandler.OnRightReleased);
                 break;
         }
 
-        DataController.Init(inputSource, scoreObjectController, initBallsCount);
+        DataController.Init(_initInputSource, scoreObjectController, initBallsCount);
 
         _stateMachine = new StateMachine(new Dictionary<GameState, BaseState>(new EnumComparer<GameState>())
             {
@@ -91,6 +90,11 @@ internal class GameController : MonoBehaviour
 
     internal void ShowEndGameScreen(int topScores, int currentScores)
     {
+        if (uiController.AIToggleIsON)
+        {
+            DataController.InputSource = _initInputSource;
+        }
+
         uiController.ShowEndGameScreen(topScores, currentScores, _inputSourceType == InputSourceType.Touch);
     }
 
@@ -172,10 +176,20 @@ internal class GameController : MonoBehaviour
     {
         if (uiController.AIToggleIsON)
         {
-            var aiController = Instantiate(Resources.Load<AIInputHandler>("AIController"), this.transform.parent);
-            DataController.InputSource = aiController;
+            UseAI();
         }
         _stateMachine.GoToState(GameState.LaunchBall);
+    }
+
+    private void UseAI()
+    {
+        if (DataController.InputSource is AIInputHandler ai)
+        {
+            Destroy(ai.gameObject);
+        }
+
+        var aiController = Instantiate(Resources.Load<AIInputHandler>("AIController"), this.transform.parent);
+        DataController.InputSource = aiController;
     }
 
     private void EnsureComponentExists<T>(T component) where T : MonoBehaviour

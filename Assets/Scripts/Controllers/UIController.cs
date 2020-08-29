@@ -11,6 +11,8 @@ internal class UIController : MonoBehaviour
     [SerializeField] private Text finalScores;
     [SerializeField] private Text topScoresEndGameText;
     [SerializeField] private Text ballsLeft;
+    [SerializeField] private Text startGameInfo;
+    [SerializeField] private Text endGameInfo;
     [SerializeField] private GameObject startScreen;
     [SerializeField] private GameObject endScreen;
     [SerializeField] private Button startButton;
@@ -21,9 +23,19 @@ internal class UIController : MonoBehaviour
 
     internal bool AIToggleIsON => aiToggle.isOn;
 
-    internal void SetTopScores(Text textObject, int topScores)
+    private readonly string _startGameKeyboardInfoGame = "Hold Space for launch ball\nUse A and D for left and right flippers";
+    private readonly string _startGameKeyboardInfoStart = "Press T for start game";
+    private readonly string _startGameTouchInfo = "Hold touch for launch ball\nPress left or right part of screen for flippers";
+    private readonly string _endGameInfo = "Press R to restart";
+
+    private void Start()
     {
-        textObject.text = $"Top Scores: {topScores.ToString()}";
+        aiToggle.onValueChanged.AddListener(OnAiToggled);
+    }
+
+    private void SetTopScores(Text textObject, int topScores)
+    {
+        textObject.SetText($"Top Scores: {topScores.ToString()}");
     }
 
     internal void SetStartButtonAction(Action startAction)
@@ -55,10 +67,10 @@ internal class UIController : MonoBehaviour
 
         switch (direction)
         {
-            case FlipperDirection.Up:
+            case FlipperDirection.Down:
                 entry.eventID = EventTriggerType.PointerUp;
                 break;
-            case FlipperDirection.Down:
+            case FlipperDirection.Up:
                 entry.eventID = EventTriggerType.PointerDown;
                 break;
         }
@@ -67,19 +79,14 @@ internal class UIController : MonoBehaviour
         trigger.triggers.Add(entry);
     }
 
-    internal void BindRestartButton(Action restartAction)
-    {
-        restartButton.onClick.AddListener(new UnityAction(restartAction));
-    }
-
     internal void SetCurrentScores(int scores)
     {
-        currentScores.text = $"Scores:\n{scores.ToString()}";
+        currentScores.SetText($"Scores:\n{scores.ToString()}");
     }
 
     internal void SetBallsLeft(int count)
     {
-        ballsLeft.text = $"Balls left:\n{count}";
+        ballsLeft.SetText($"Balls left:\n{count.ToString()}");
     }
 
     internal void ShowStartScreenWithTopScores(int topScores, bool showButton)
@@ -87,14 +94,18 @@ internal class UIController : MonoBehaviour
         SetTopScores(topScoresText, topScores);
         ShowStartScreen();
 
+        startGameInfo.SetText(showButton ? _startGameTouchInfo : $"{_startGameKeyboardInfoStart}\n{_startGameKeyboardInfoGame}");
+
         startButton.gameObject.SetActive(showButton);
     }
 
     internal void ShowEndGameScreen(int topScores, int currentScores, bool showButton)
     {
         SetTopScores(topScoresEndGameText,topScores);
-        finalScores.text = $"Final Scores: {currentScores.ToString()}";
+        finalScores.SetText($"Final Scores: {currentScores.ToString()}");
         restartButton.gameObject.SetActive(showButton);
+        if (!showButton)
+            endGameInfo.SetText(_endGameInfo);
         ShowEndScreen();
     }
 
@@ -107,6 +118,14 @@ internal class UIController : MonoBehaviour
     {
         ShowScreen(startScreen, true);
         ShowScreen(endScreen, false);
+    }
+
+    private void OnAiToggled(bool toggled)
+    {
+        if (startButton.gameObject.activeSelf)
+            return;
+
+        startGameInfo.SetText(toggled ? _startGameKeyboardInfoStart : $"{_startGameKeyboardInfoStart}\n{_startGameKeyboardInfoGame}");
     }
 
     private void ShowEndScreen()
