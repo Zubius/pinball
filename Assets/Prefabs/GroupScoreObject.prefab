@@ -12,9 +12,9 @@ GameObject:
   - component: {fileID: 4155858861748953943}
   - component: {fileID: 232247946832879795}
   - component: {fileID: 3433138251032483252}
-  - component: {fileID: 8505106639789743911}
+  - component: {fileID: 6040358306528398997}
   m_Layer: 0
-  m_Name: ScoreObject
+  m_Name: GroupScoreObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -94,7 +94,7 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &8505106639789743911
+--- !u!114 &6040358306528398997
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -103,9 +103,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 5962627562664939998}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: db24bef7296e48e99bf1d157cb38fd43, type: 3}
+  m_Script: {fileID: 11500000, guid: b57f87e3354649718cc17df7b831c36f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   scoreAmount: 42
-  additionalForce: 1
-  type: 0
+  additionalForce: 300
+  id: 0
+  groupId: 0

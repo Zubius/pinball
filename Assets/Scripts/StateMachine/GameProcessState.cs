@@ -10,9 +10,14 @@ internal class GameProcessState : BaseState
         DataController.ScoreObjectController.OnScored += OnScored;
     }
 
-    private void OnScored(ScoreObjectType type, int scores)
+    private void OnScored(ScoreObjectArgs scoreObjectArgs)
     {
-        DataController.GameScoreController.AddScores(scores);
+        DataController.GameScoreController.AddScores(scoreObjectArgs.Scores);
+
+        if (scoreObjectArgs.TaskId.HasValue && DataController.ScoreTaskController.CheckTaskCompleteById(scoreObjectArgs.TaskId.Value, out int reward))
+        {
+            DataController.GameScoreController.AddScores(reward);
+        }
     }
 
     internal override void OnStateExit()

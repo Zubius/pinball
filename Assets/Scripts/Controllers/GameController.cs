@@ -103,9 +103,10 @@ internal class GameController : MonoBehaviour
         uiController.HideStartScreen();
     }
 
-    internal void ScoreObject(ScoreObjectType type, int scores)
+    internal void ScoreObject(int id, int scores, int? taskId)
     {
-        scoreObjectController.ScoreObject(type, scores);
+        scoreObjectController.ScoreObject(id, scores, taskId);
+
     }
 
     internal void LaunchBall(BallType type, float force)

@@ -11,7 +11,7 @@ internal abstract class BaseState
         Controller = controller;
     }
 
-    internal virtual GameState State { get; }
+    internal abstract GameState State { get; }
 
     internal virtual void OnStateEnter() {}
 
