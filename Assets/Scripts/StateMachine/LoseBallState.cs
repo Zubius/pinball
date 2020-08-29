@@ -17,6 +17,7 @@ internal class LoseBallState : BaseState
 
     private void OnRestart()
     {
+        DataController.InputSource.OnRestartPressed -= OnRestart;
         DataController.Dispose();
         Controller.ReloadScene();
     }
