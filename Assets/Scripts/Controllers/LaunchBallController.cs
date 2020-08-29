@@ -7,6 +7,7 @@ using Random = UnityEngine.Random;
 internal class LaunchBallController : MonoBehaviour
 {
     [SerializeField] private Transform launchPoint;
+    [SerializeField] private int launchForceMultiply = 100;
     [SerializeField] private Ball[] balls;
 
     private Dictionary<BallType, Ball> _ballsByType;
@@ -29,7 +30,7 @@ internal class LaunchBallController : MonoBehaviour
 
         ball.transform.position = launchPoint.position;
 
-        ball.Launch(force);
+        ball.Launch(force * launchForceMultiply);
         OnBallLaunched?.Invoke(ball);
     }
 }
