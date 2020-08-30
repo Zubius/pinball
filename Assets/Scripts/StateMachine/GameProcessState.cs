@@ -16,6 +16,7 @@ internal class GameProcessState : BaseState
 
         if (scoreObjectArgs.TaskId.HasValue && DataController.ScoreTaskController.CheckTaskCompleteById(scoreObjectArgs.TaskId.Value, out int reward))
         {
+            DataController.ScoreObjectController.RemoveTaskFromObjects(scoreObjectArgs.TaskId.Value);
             DataController.GameScoreController.AddScores(reward);
         }
     }

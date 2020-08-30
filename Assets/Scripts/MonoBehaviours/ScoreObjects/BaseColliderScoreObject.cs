@@ -14,7 +14,7 @@ internal abstract class BaseColliderScoreObject : BaseScoreObject
 
     protected virtual void CollisionWithBallHandler(Collision ballCollision, Rigidbody ball)
     {
-        GameController.Instance.ScoreObject(id, scoreAmount, _task?.Id);
+        GameController.Instance.ScoreObject(id, scoreAmount, Task?.Id);
 
         ball.AddForce(additionalForce * ballCollision.contacts[0].normal * -1);
     }

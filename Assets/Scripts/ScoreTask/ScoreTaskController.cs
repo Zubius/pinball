@@ -21,11 +21,17 @@ internal class ScoreTaskController
         }
     }
 
+    internal int GetNextTaskId()
+    {
+        return _taskIdsToTasks.Count;
+    }
+
     internal bool CheckTaskCompleteById(int taskId, out int reward)
     {
         if (_taskIdsToTasks.TryGetValue(taskId, out var task) && task.CheckCompleted())
         {
             reward = task.Reward;
+            _taskIdsToTasks.Remove(taskId);
             return true;
         }
         else

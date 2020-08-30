@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 internal class AIInputHandler : MonoBehaviour, IInputSource
 {
@@ -39,7 +40,7 @@ internal class AIInputHandler : MonoBehaviour, IInputSource
     {
         yield return _startWaiter;
 
-        OnLaunchReleased?.Invoke(0.7f);
+        OnLaunchReleased?.Invoke(Random.Range(0.8f, 1.5f));
     }
 
     private IEnumerator MoveFlipper(Side side)

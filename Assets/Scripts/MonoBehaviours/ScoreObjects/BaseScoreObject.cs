@@ -8,11 +8,18 @@ internal abstract class BaseScoreObject : MonoBehaviour
     [SerializeField] protected float additionalForce = 1;
     [SerializeField] protected int id;
 
-    protected ScoreAbstractTask _task;
+    internal ScoreAbstractTask Task { get; private set; }
+    internal int Id => id;
 
     internal void SetTask(ScoreAbstractTask task)
     {
-        _task = task;
+        Task = task;
+    }
+
+    internal void RemoveTask()
+    {
+        if (Task?.CheckCompleted() ?? false)
+            Task = null;
     }
 
     internal void SetId(int id)
@@ -20,7 +27,7 @@ internal abstract class BaseScoreObject : MonoBehaviour
         this.id = id;
     }
 
-    protected abstract ScoreObjectType Type { get; }
+    internal abstract ScoreObjectType Type { get; }
 }
 
 internal enum ScoreObjectType

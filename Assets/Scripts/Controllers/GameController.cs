@@ -21,7 +21,7 @@ internal class GameController : MonoBehaviour
 
     private InputSourceType _inputSourceType;
 
-    private void Awake()
+    private void Start()
     {
         #if UNITY_EDITOR || UNITY_STANDALONE
         _inputSourceType = InputSourceType.Keyboard;

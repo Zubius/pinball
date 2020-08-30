@@ -2,5 +2,5 @@ using UnityEngine;
 
 internal class SimpleScoreObject : BaseColliderScoreObject
 {
-    protected override ScoreObjectType Type => ScoreObjectType.Simple;
+    internal override ScoreObjectType Type => ScoreObjectType.Simple;
 }

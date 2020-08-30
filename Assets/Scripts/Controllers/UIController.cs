@@ -104,7 +104,14 @@ internal class UIController : MonoBehaviour
         SetTopScores(topScoresEndGameText,topScores);
         finalScores.SetText($"Final Scores: {currentScores.ToString()}");
         restartButton.gameObject.SetActive(showButton);
-        endGameInfo.enabled = !showButton;
+
+        if (!showButton)
+        {
+            endGameInfo.enabled = true;
+            endGameInfo.SetText(_endGameInfo);
+        }
+        else
+            endGameInfo.enabled = !showButton;
         ShowEndScreen();
     }
 

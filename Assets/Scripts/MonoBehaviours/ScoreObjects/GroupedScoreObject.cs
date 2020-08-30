@@ -6,7 +6,14 @@ internal class GroupedScoreObject : SimpleScoreObject
 
     internal GroupId GroupId => groupId;
 
-    protected override ScoreObjectType Type => ScoreObjectType.Grouped;
+    internal override ScoreObjectType Type => ScoreObjectType.Grouped;
+
+    protected override void CollisionWithBallHandler(Collision ballCollision, Rigidbody ball)
+    {
+        base.CollisionWithBallHandler(ballCollision, ball);
+
+        Task?.AddProgress(id);
+    }
 }
 
 internal enum GroupId

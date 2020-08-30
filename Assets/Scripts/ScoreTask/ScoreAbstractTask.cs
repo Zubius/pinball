@@ -8,6 +8,7 @@ internal abstract class ScoreAbstractTask
     internal readonly int Reward;
 
     private HashSet<int> _objects;
+    protected bool _isComplete;
 
     internal ScoreAbstractTask(int id, int[] objects, int reward, ScoreObjectType forType)
     {
@@ -24,8 +25,9 @@ internal abstract class ScoreAbstractTask
         return _objects.Contains(id);
     }
 
-    internal bool CheckCompleted()
-    {
-        return false;
-    }
+    internal abstract bool AddProgress(int objectId);
+
+    internal abstract void ResetCondition();
+
+    internal abstract bool CheckCompleted();
 }
