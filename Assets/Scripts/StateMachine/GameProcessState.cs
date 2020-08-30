@@ -1,4 +1,4 @@
-internal class GameProcessState : BaseState
+internal class GameProcessState : BaseAbstractState
 {
     internal override GameState State => GameState.GameProcess;
 

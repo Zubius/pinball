@@ -1,6 +1,6 @@
 using UnityEngine;
 
-internal class LaunchBallState : BaseState
+internal class LaunchBallState : BaseAbstractState
 {
     internal override GameState State => GameState.LaunchBall;
 

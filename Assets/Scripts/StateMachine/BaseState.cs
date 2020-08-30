@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-internal abstract class BaseState
+internal abstract class BaseAbstractState
 {
     protected readonly GameController Controller;
 
-    internal BaseState(GameController controller)
+    internal BaseAbstractState(GameController controller)
     {
         Controller = controller;
     }
@@ -25,4 +25,5 @@ internal enum GameState
     LaunchBall,
     GameProcess,
     LoseBall,
+    EndGame,
 }

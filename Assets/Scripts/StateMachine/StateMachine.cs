@@ -5,10 +5,10 @@ using UnityEngine;
 
 internal class StateMachine
 {
-    private readonly Dictionary<GameState, BaseState> _states;
-    private BaseState _currentState;
+    private readonly Dictionary<GameState, BaseAbstractState> _states;
+    private BaseAbstractState _currentState;
 
-    internal StateMachine(Dictionary<GameState, BaseState> states)
+    internal StateMachine(Dictionary<GameState, BaseAbstractState> states)
     {
         _states = states.ToDictionary(
             s => s.Key,

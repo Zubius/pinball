@@ -18,6 +18,7 @@ internal class GameController : MonoBehaviour
     private StateMachine _stateMachine;
     private Ball _ball;
     private IInputSource _initInputSource;
+    private AIInputHandler _aiController;
 
     private InputSourceType _inputSourceType;
 
@@ -63,12 +64,13 @@ internal class GameController : MonoBehaviour
 
         DataController.Init(_initInputSource, scoreObjectController, initBallsCount);
 
-        _stateMachine = new StateMachine(new Dictionary<GameState, BaseState>(new EnumComparer<GameState>())
+        _stateMachine = new StateMachine(new Dictionary<GameState, BaseAbstractState>(new EnumComparer<GameState>())
             {
                 [GameState.StartGame] = new StartGameState(this),
                 [GameState.LaunchBall] = new LaunchBallState(this),
                 [GameState.GameProcess] = new GameProcessState(this),
                 [GameState.LoseBall] = new LoseBallState(this),
+                [GameState.EndGame] = new EndGameState(this)
             }
         );
 
@@ -88,13 +90,18 @@ internal class GameController : MonoBehaviour
         StartGame();
     }
 
-    internal void ShowEndGameScreen(int topScores, int currentScores)
+    internal void SetEndGame()
     {
         if (uiController.AIToggleIsON)
         {
-            DataController.InputSource = _initInputSource;
+            DataController.InputSource.SetSingleSource(_initInputSource);
         }
 
+        _stateMachine.GoToState(GameState.EndGame);
+    }
+
+    internal void ShowEndGameScreen(int topScores, int currentScores)
+    {
         uiController.ShowEndGameScreen(topScores, currentScores, _inputSourceType == InputSourceType.Touch);
     }
 
@@ -179,18 +186,21 @@ internal class GameController : MonoBehaviour
         {
             UseAI();
         }
+
         _stateMachine.GoToState(GameState.LaunchBall);
     }
 
     private void UseAI()
     {
-        if (DataController.InputSource is AIInputHandler ai)
+        if (_aiController != null)
         {
-            Destroy(ai.gameObject);
+            _aiController.Restart();
         }
-
-        var aiController = Instantiate(Resources.Load<AIInputHandler>("AIController"), this.transform.parent);
-        DataController.InputSource = aiController;
+        else
+        {
+            _aiController = Instantiate(Resources.Load<AIInputHandler>("AIController"), this.transform.parent);
+            DataController.InputSource.SetSingleSource(_aiController);
+        }
     }
 
     private void EnsureComponentExists<T>(T component) where T : MonoBehaviour

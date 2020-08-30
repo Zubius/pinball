@@ -1,4 +1,4 @@
-internal class LoseBallState : BaseState
+internal class LoseBallState : BaseAbstractState
 {
     internal override GameState State => GameState.LoseBall;
 
@@ -8,18 +8,8 @@ internal class LoseBallState : BaseState
             Controller.PlatNextBall();
         else
         {
-            DataController.GameScoreController.SaveScores();
-            Controller.ShowEndGameScreen(DataController.GameScoreController.TopScores,
-                DataController.GameScoreController.CurrentScores);
-            DataController.InputSource.OnRestartPressed += OnRestart;
+            Controller.SetEndGame();
         }
-    }
-
-    private void OnRestart()
-    {
-        DataController.InputSource.OnRestartPressed -= OnRestart;
-        DataController.Dispose();
-        Controller.ReloadScene();
     }
 
     public LoseBallState(GameController controller) : base(controller) { }

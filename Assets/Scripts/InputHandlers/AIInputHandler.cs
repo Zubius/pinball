@@ -11,12 +11,27 @@ internal class AIInputHandler : MonoBehaviour, IInputSource
     private readonly WaitForSeconds _startWaiter = new WaitForSeconds(2);
     private readonly WaitForSeconds _flipperWaiter = new WaitForSeconds(0.2f);
 
-    private IEnumerator Start()
+    private Coroutine _startCoroutine;
+
+    private void Start()
+    {
+        Restart();
+    }
+
+    internal void Restart()
+    {
+        if (_startCoroutine != null)
+            StopCoroutine(_startCoroutine);
+
+        _startCoroutine = StartCoroutine(StartAI());
+    }
+
+    private IEnumerator StartAI()
     {
         leftTrigger.OnTriggered += LeftTriggerOnOnTriggered;
         rightTrigger.OnTriggered += RightTriggerOnOnTriggered;
 
-        yield return StartGame();
+        return StartGame();
     }
 
     private void RightTriggerOnOnTriggered()
