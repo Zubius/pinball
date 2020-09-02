@@ -110,8 +110,6 @@ internal class GameController : MonoBehaviour
         {
             _inputSourceController.SetSingleSource(_initInputSource);
         }
-
-        _stateMachine.ProcessInput(GameEvent.EndGame, null);
     }
 
     internal void ScoreObject(int id, int scores, int? taskId)
