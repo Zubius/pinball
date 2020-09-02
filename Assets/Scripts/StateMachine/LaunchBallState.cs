@@ -1,6 +1,6 @@
 using UnityEngine;
 
-internal class LaunchBallState : BaseAbstractState
+internal class LaunchBallState : BaseGameState
 {
     internal override GameState State => GameState.LaunchBall;
 
@@ -8,24 +8,23 @@ internal class LaunchBallState : BaseAbstractState
 
     internal override void OnStateEnter()
     {
-        DataController.InputSource.OnLaunchReleased += OnLaunchBallReleased;
-        DataController.BallsController.DecrementBallsCount();
-        Controller.UpdateBallsLeft(DataController.BallsController.BallsCount);
-        Controller.HideStartScreen();
+        GameController.Instance.UpdateBallsLeft(DataController.BallsController.BallsCount);
+        GameController.Instance.HideStartScreen();
     }
 
-    internal override void OnStateExit()
+    internal override bool ProcessEvent(GameEvent gameEvent, IInputContainer data, out GameState nextState)
     {
-        DataController.InputSource.OnLaunchReleased -= OnLaunchBallReleased;
-    }
-
-    public LaunchBallState(GameController controller) : base(controller) { }
-
-    private void OnLaunchBallReleased(float duration)
-    {
-        if (duration > 0)
+        if (gameEvent == GameEvent.LaunchBall && data is LaunchInput launchData)
         {
-            Controller.LaunchBall(_ballTypes[Random.Range(0, _ballTypes.Length - 1)], duration);
+            DataController.BallsController.DecrementBallsCount();
+            GameController.Instance.UpdateBallsLeft(DataController.BallsController.BallsCount);
+            GameController.Instance.LaunchBall(_ballTypes[Random.Range(0, _ballTypes.Length - 1)], launchData.HoldDuration);
+
+            nextState = GameState.GameProcess;
+            return true;
         }
+
+        nextState = GameState.None;
+        return false;
     }
 }

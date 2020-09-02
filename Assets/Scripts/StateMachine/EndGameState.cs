@@ -1,20 +1,28 @@
-internal class EndGameState : BaseAbstractState
+internal class EndGameState : BaseGameState
 {
-    public EndGameState(GameController controller) : base(controller) { }
-
     internal override void OnStateEnter()
     {
         DataController.GameScoreController.SaveScores();
-        Controller.ShowEndGameScreen(DataController.GameScoreController.TopScores,
+        GameController.Instance.ShowEndGameScreen(DataController.GameScoreController.TopScores,
             DataController.GameScoreController.CurrentScores);
-        DataController.InputSource.OnRestartPressed += OnRestart;
+        GameController.Instance.SetEndGame();
     }
 
-    private void OnRestart()
+    internal override bool ProcessEvent(GameEvent gameEvent, IInputContainer _, out GameState nextState)
     {
-        DataController.InputSource.OnRestartPressed -= OnRestart;
+        if (gameEvent == GameEvent.Restart)
+        {
+            Restart();
+        }
+
+        nextState = GameState.None;
+        return false;
+    }
+
+    private void Restart()
+    {
         DataController.Dispose();
-        Controller.ReloadScene();
+        GameController.Instance.ReloadScene();
     }
 
     internal override GameState State => GameState.EndGame;

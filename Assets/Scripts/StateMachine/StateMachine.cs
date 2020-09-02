@@ -5,10 +5,10 @@ using UnityEngine;
 
 internal class StateMachine
 {
-    private readonly Dictionary<GameState, BaseAbstractState> _states;
-    private BaseAbstractState _currentState;
+    private readonly Dictionary<GameState, BaseGameState> _states;
+    private BaseGameState _currentState;
 
-    internal StateMachine(Dictionary<GameState, BaseAbstractState> states)
+    internal StateMachine(Dictionary<GameState, BaseGameState> states)
     {
         _states = states.ToDictionary(
             s => s.Key,
@@ -16,7 +16,21 @@ internal class StateMachine
             new EnumComparer<GameState>());
     }
 
-    internal void GoToState(GameState toState)
+    internal void Start()
+    {
+        GoToState(GameState.StartGame);
+    }
+
+    internal void ProcessInput(GameEvent gameEvent, IInputContainer data)
+    {
+        Debug.Log($"Input Event: {gameEvent}, Data: {data}");
+        if (_currentState.ProcessEvent(gameEvent, data, out GameState nextState))
+        {
+            GoToState(nextState);
+        }
+    }
+
+    private void GoToState(GameState toState)
     {
         if (_states.TryGetValue(toState, out var nextState))
         {
