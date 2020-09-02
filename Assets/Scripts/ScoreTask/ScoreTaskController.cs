@@ -21,9 +21,20 @@ internal class ScoreTaskController
         }
     }
 
-    internal int GetNextTaskId()
+    private int GetNextTaskId()
     {
         return _taskIdsToTasks.Count;
+    }
+
+    internal ScoreAbstractTask CreateNewTas(int reward, int[] ids, ScoreObjectType type)
+    {
+        switch (type)
+        {
+            case ScoreObjectType.Grouped:
+                return new GroupScoreTask(GetNextTaskId(), ids, reward, type);
+            default:
+                return null;
+        }
     }
 
     internal bool CheckTaskCompleteById(int taskId, out int reward)

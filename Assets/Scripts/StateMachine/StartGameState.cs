@@ -10,12 +10,7 @@ internal class StartGameState : BaseGameState
 
         GameController.Instance.ShowNewGameScreen(DataController.GameScoreController.TopScores);
 
-        var taskId = DataController.ScoreTaskController.GetNextTaskId();
-        var grouped = DataController.ScoreObjectController.GetObjectIdsByType(ScoreObjectType.Grouped);
-        var groupTask = new GroupScoreTask(taskId, grouped, 500, ScoreObjectType.Grouped);
-
-        DataController.ScoreTaskController.AddNewTask(groupTask);
-        DataController.ScoreObjectController.AssignTaskToObjects(groupTask, grouped);
+        DataController.CreateAndAssignTask(500, ScoreObjectType.Grouped);
     }
 
     internal override bool ProcessEvent(GameEvent gameEvent, IInputContainer _, out GameState nextState)

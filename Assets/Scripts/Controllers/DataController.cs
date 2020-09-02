@@ -20,4 +20,13 @@ internal static class DataController
         BallsController = null;
         ScoreObjectController = null;
     }
+
+    internal static void CreateAndAssignTask(int reward, ScoreObjectType type)
+    {
+        var grouped = ScoreObjectController.GetObjectIdsByType(ScoreObjectType.Grouped);
+        var groupTask = ScoreTaskController.CreateNewTas(500, grouped, ScoreObjectType.Grouped);
+
+        ScoreTaskController.AddNewTask(groupTask);
+        ScoreObjectController.AssignTaskToObjects(groupTask, grouped);
+    }
 }

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-internal abstract class BaseAbstractState<TState, TData, TEvent> where TState : Enum where  TData : IInputContainer where TEvent : Enum
+internal abstract class BaseAbstractState<TState, TData, TEvent> where TState : Enum where TData : IInputContainer where TEvent : Enum
 {
     internal abstract TState State { get; }
 
