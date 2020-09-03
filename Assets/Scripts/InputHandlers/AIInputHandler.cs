@@ -28,6 +28,9 @@ internal class AIInputHandler : MonoBehaviour, IInputSource
 
     private IEnumerator StartAI()
     {
+        leftTrigger.OnTriggered -= LeftTriggerOnOnTriggered;
+        rightTrigger.OnTriggered -= RightTriggerOnOnTriggered;
+
         leftTrigger.OnTriggered += LeftTriggerOnOnTriggered;
         rightTrigger.OnTriggered += RightTriggerOnOnTriggered;
 
