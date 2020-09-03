@@ -33,7 +33,6 @@ internal enum GameEvent
     DropBall,
     UpdateScores,
     AddScores,
-    PlayNextBall,
-    EndGame,
+    HandleBallDropped,
     Restart
 }

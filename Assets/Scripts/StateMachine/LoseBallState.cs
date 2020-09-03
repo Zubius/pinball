@@ -14,12 +14,16 @@ internal class LoseBallState : BaseGameState
         nextState = GameState.None;
         switch (gameEvent)
         {
-            case GameEvent.PlayNextBall:
-                GameController.Instance.PlatNextBall();
-                nextState = GameState.LaunchBall;
-                return true;
-            case GameEvent.EndGame:
-                nextState = GameState.EndGame;
+            case GameEvent.HandleBallDropped:
+                if (DataController.BallsController.BallsCount > 0)
+                {
+                    GameController.Instance.PlatNextBall();
+                    nextState = GameState.LaunchBall;
+                }
+                else
+                {
+                    nextState = GameState.EndGame;
+                }
                 return true;
         }
 

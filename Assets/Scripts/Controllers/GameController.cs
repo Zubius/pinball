@@ -101,7 +101,7 @@ internal class GameController : MonoBehaviour
 
     internal void SetBallDropped()
     {
-        _stateMachine.ProcessInput(DataController.BallsController.BallsCount > 0 ? GameEvent.PlayNextBall : GameEvent.EndGame, null);
+        _stateMachine.ProcessInput(GameEvent.HandleBallDropped, null);
     }
 
     internal void SetEndGame()
