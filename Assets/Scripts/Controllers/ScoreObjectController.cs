@@ -70,4 +70,9 @@ internal struct ScoreObjectArgs
         Scores = scores;
         TaskId = taskId;
     }
+
+    public override string ToString()
+    {
+        return $"Scored Id: {Id.ToString()}, Scores To Add: {Scores.ToString()}, Task Id: {(TaskId.HasValue ? TaskId.Value.ToString() : string.Empty)}";
+    }
 }

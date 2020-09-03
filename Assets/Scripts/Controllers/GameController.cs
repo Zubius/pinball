@@ -19,6 +19,7 @@ internal class GameController : MonoBehaviour
     private Ball _ball;
     private IInputSource _initInputSource;
     private AIInputHandler _aiController;
+    private InputSourceController _inputSourceController;
 
     private InputSourceType _inputSourceType;
 
@@ -62,15 +63,17 @@ internal class GameController : MonoBehaviour
                 break;
         }
 
-        DataController.Init(_initInputSource, scoreObjectController, initBallsCount);
+        DataController.Init(scoreObjectController, initBallsCount);
+        DataController.GameScoreController.OnScoreChanged += OnGameScoreChanged;
+        DataController.ScoreObjectController.OnScored += OnScored;
 
-        _stateMachine = new StateMachine(new Dictionary<GameState, BaseAbstractState>(new EnumComparer<GameState>())
+        _stateMachine = new StateMachine(new Dictionary<GameState, BaseGameState>(new EnumComparer<GameState>())
             {
-                [GameState.StartGame] = new StartGameState(this),
-                [GameState.LaunchBall] = new LaunchBallState(this),
-                [GameState.GameProcess] = new GameProcessState(this),
-                [GameState.LoseBall] = new LoseBallState(this),
-                [GameState.EndGame] = new EndGameState(this)
+                [GameState.StartGame] = new StartGameState(),
+                [GameState.LaunchBall] = new LaunchBallState(),
+                [GameState.GameProcess] = new GameProcessState(),
+                [GameState.LoseBall] = new LoseBallState(),
+                [GameState.EndGame] = new EndGameState()
             }
         );
 
@@ -78,11 +81,17 @@ internal class GameController : MonoBehaviour
         launchBallController.OnBallLaunched += OnBallLaunched;
 
         Init();
+        InitInputSourceController(_initInputSource);
     }
 
-    internal void ShowNewGameScreen(int topScores)
+    private void OnScored(ScoreObjectArgs obj)
     {
-        uiController.ShowStartScreenWithTopScores(topScores, _inputSourceType == InputSourceType.Touch);
+        _stateMachine.ProcessInput(GameEvent.AddScores, new ScoreInput(obj));
+    }
+
+    private void OnGameScoreChanged()
+    {
+        _stateMachine.ProcessInput(GameEvent.UpdateScores, null);
     }
 
     internal void PlatNextBall()
@@ -90,24 +99,17 @@ internal class GameController : MonoBehaviour
         StartGame();
     }
 
+    internal void SetBallDropped()
+    {
+        _stateMachine.ProcessInput(DataController.BallsController.BallsCount > 0 ? GameEvent.PlayNextBall : GameEvent.EndGame, null);
+    }
+
     internal void SetEndGame()
     {
         if (uiController.AIToggleIsON)
         {
-            DataController.InputSource.SetSingleSource(_initInputSource);
+            _inputSourceController.SetSingleSource(_initInputSource);
         }
-
-        _stateMachine.GoToState(GameState.EndGame);
-    }
-
-    internal void ShowEndGameScreen(int topScores, int currentScores)
-    {
-        uiController.ShowEndGameScreen(topScores, currentScores, _inputSourceType == InputSourceType.Touch);
-    }
-
-    internal void HideStartScreen()
-    {
-        uiController.HideStartScreen();
     }
 
     internal void ScoreObject(int id, int scores, int? taskId)
@@ -121,6 +123,22 @@ internal class GameController : MonoBehaviour
         launchBallController.LaunchBall(type, force);
     }
 
+    #region update ui
+    internal void ShowNewGameScreen(int topScores)
+    {
+        uiController.ShowStartScreenWithTopScores(topScores, _inputSourceType == InputSourceType.Touch);
+    }
+
+    internal void ShowEndGameScreen(int topScores, int currentScores)
+    {
+        uiController.ShowEndGameScreen(topScores, currentScores, _inputSourceType == InputSourceType.Touch);
+    }
+
+    internal void HideStartScreen()
+    {
+        uiController.HideStartScreen();
+    }
+
     internal void UpdateScores(int scores)
     {
         uiController.SetCurrentScores(scores);
@@ -130,6 +148,7 @@ internal class GameController : MonoBehaviour
     {
         uiController.SetBallsLeft(count);
     }
+    #endregion
 
     internal void MoveLeftFlipper(FlipperDirection direction)
     {
@@ -156,8 +175,41 @@ internal class GameController : MonoBehaviour
 
     private void Init()
     {
-        _stateMachine.GoToState(GameState.StartGame);
+        _stateMachine.Start();
     }
+
+    #region InputSource
+    private void InitInputSourceController(IInputSource source)
+    {
+        _inputSourceController = new InputSourceController();
+        _inputSourceController.AddSource(source);
+        _inputSourceController.OnStartPressed += InputSourceControllerOnOnStartPressed;
+        _inputSourceController.OnLaunchReleased += InputSourceControllerOnOnLaunchReleased;
+        _inputSourceController.OnFlipperAction += InputSourceControllerOnOnFlipperAction;
+        _inputSourceController.OnRestartPressed += InputSourceControllerOnOnRestartPressed;
+    }
+
+    private void InputSourceControllerOnOnRestartPressed()
+    {
+        _stateMachine.ProcessInput(GameEvent.Restart, null);
+    }
+
+    private void InputSourceControllerOnOnFlipperAction(Side arg1, FlipperDirection arg2)
+    {
+        _stateMachine.ProcessInput(GameEvent.MoveFlipper, new FlipperInput(arg1, arg2));
+    }
+
+    private void InputSourceControllerOnOnLaunchReleased(float obj)
+    {
+        _stateMachine.ProcessInput(GameEvent.LaunchBall, new LaunchInput(obj));
+    }
+
+    private void InputSourceControllerOnOnStartPressed()
+    {
+        _stateMachine.ProcessInput(GameEvent.StartGame, null);
+    }
+
+    #endregion
 
     internal void ReloadScene()
     {
@@ -171,13 +223,12 @@ internal class GameController : MonoBehaviour
             Destroy(_ball.gameObject);
         }
 
-        _stateMachine.GoToState(GameState.LoseBall);
+        _stateMachine.ProcessInput(GameEvent.DropBall, null);
     }
 
     private void OnBallLaunched(Ball ball)
     {
         _ball = ball;
-        _stateMachine.GoToState(GameState.GameProcess);
     }
 
     internal void StartGame()
@@ -186,8 +237,6 @@ internal class GameController : MonoBehaviour
         {
             UseAI();
         }
-
-        _stateMachine.GoToState(GameState.LaunchBall);
     }
 
     private void UseAI()
@@ -199,7 +248,7 @@ internal class GameController : MonoBehaviour
         else
         {
             _aiController = Instantiate(Resources.Load<AIInputHandler>("AIController"), this.transform.parent);
-            DataController.InputSource.SetSingleSource(_aiController);
+            _inputSourceController.SetSingleSource(_aiController);
         }
     }
 

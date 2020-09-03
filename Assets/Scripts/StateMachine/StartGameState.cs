@@ -1,24 +1,28 @@
-internal class StartGameState : BaseAbstractState
+using CoreHapticsUnity;
+
+internal class StartGameState : BaseGameState
 {
     internal override GameState State => GameState.StartGame;
 
     internal override void OnStateEnter()
     {
-        Controller.ShowNewGameScreen(DataController.GameScoreController.TopScores);
-        DataController.InputSource.OnStartPressed += Controller.StartGame;
+        CoreHapticsUnityProxy.LogLevel = LogsLevel.None;
 
-        var taskId = DataController.ScoreTaskController.GetNextTaskId();
-        var grouped = DataController.ScoreObjectController.GetObjectIdsByType(ScoreObjectType.Grouped);
-        var groupTask = new GroupScoreTask(taskId, grouped, 500, ScoreObjectType.Grouped);
+        GameController.Instance.ShowNewGameScreen(DataController.GameScoreController.TopScores);
 
-        DataController.ScoreTaskController.AddNewTask(groupTask);
-        DataController.ScoreObjectController.AssignTaskToObjects(groupTask, grouped);
+        DataController.CreateAndAssignTask(500, ScoreObjectType.Grouped);
     }
 
-    internal override void OnStateExit()
+    internal override bool ProcessEvent(GameEvent gameEvent, IInputContainer _, out GameState nextState)
     {
-        DataController.InputSource.OnStartPressed -= Controller.StartGame;
-    }
+        if (gameEvent == GameEvent.StartGame)
+        {
+            GameController.Instance.StartGame();
+            nextState = GameState.LaunchBall;
+            return true;
+        }
 
-    public StartGameState(GameController controller) : base(controller) { }
+        nextState = GameState.None;
+        return false;
+    }
 }
