@@ -1,11 +1,11 @@
 using System;
 using CoreHapticsUnity;
 
-internal class GameProcessState : BaseGameState
+internal sealed class GameProcessState : BaseGameState
 {
     internal override GameState State => GameState.GameProcess;
 
-    internal override bool ProcessEvent(GameEvent gameEvent, IInputContainer data, out GameState nextState)
+    internal override bool ProcessEvent(GameEvent gameEvent, IInputContainer data, IPinballContext context, out GameState nextState)
     {
         nextState = GameState.None;
 
@@ -13,7 +13,7 @@ internal class GameProcessState : BaseGameState
         {
             case GameEvent.MoveFlipper:
                 if (data is FlipperInput flipper)
-                    MoveFlipper(flipper.FlipperSide, flipper.FlipperDirection);
+                    context.MoveFlipper(flipper.FlipperSide, flipper.FlipperDirection);
                 break;
             case GameEvent.DropBall:
                 nextState = GameState.LoseBall;
@@ -22,50 +22,25 @@ internal class GameProcessState : BaseGameState
                 if (data is ScoreInput scoreData)
                     OnScored(scoreData.ScoreArgs);
                 break;
-            case GameEvent.UpdateScores:
-                UpdateGameScores();
-                break;
         }
         return false;
-    }
 
-    private void OnScored(ScoreObjectArgs scoreObjectArgs)
-    {
-        DataController.GameScoreController.AddScores(scoreObjectArgs.Scores);
-
-        CoreHapticsUnityProxy.PlayTransient(0.5f, 1f);
-
-        if (scoreObjectArgs.TaskId.HasValue && DataController.ScoreTaskController.CheckTaskCompleteById(scoreObjectArgs.TaskId.Value, out int reward))
+        void OnScored(ScoreObjectArgs scoreObjectArgs)
         {
-            DataController.ScoreObjectController.RemoveTaskFromObjects(scoreObjectArgs.TaskId.Value);
-            DataController.GameScoreController.AddScores(reward);
+            int scores = scoreObjectArgs.Scores;
+            if (scoreObjectArgs.TaskId.HasValue && DataController.ScoreTaskController.CheckTaskCompleteById(scoreObjectArgs.TaskId.Value, out int reward))
+            {
+                context.CompleteTask(scoreObjectArgs.TaskId.Value);
+                scores += reward;
+            }
+            context.AddScore(scores);
         }
     }
 
-    internal override void OnStateExit()
-    {
-        GameController.Instance.MoveLeftFlipper(FlipperDirection.Down);
-        GameController.Instance.MoveRightFlipper(FlipperDirection.Down);
-    }
 
-    private void MoveFlipper(Side side, FlipperDirection direction)
+    internal override void OnStateExit(IPinballContext context)
     {
-        if (direction == FlipperDirection.Up)
-            CoreHapticsUnityProxy.PlayTransient(0.5f, 1f);
-
-        switch (side)
-        {
-            case Side.Left:
-                GameController.Instance.MoveLeftFlipper(direction);
-                break;
-            case Side.Right:
-                GameController.Instance.MoveRightFlipper(direction);
-                break;
-        }
-    }
-
-    private void UpdateGameScores()
-    {
-        GameController.Instance.UpdateScores(DataController.GameScoreController.CurrentScores);
+        context.MoveFlipper(Side.Left, FlipperDirection.Down);
+        context.MoveFlipper(Side.Right, FlipperDirection.Down);
     }
 }

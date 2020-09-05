@@ -3,15 +3,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-internal abstract class BaseAbstractState<TState, TData, TEvent> where TState : Enum where TData : IInputContainer where TEvent : Enum
+internal abstract class BaseAbstractState<TState, TData, TContext, TEvent>
+    where TState : Enum
+    where TData : IInputContainer
+    where TContext : IStateMachineContext
+    where TEvent : Enum
 {
     internal abstract TState State { get; }
 
-    internal virtual void OnStateEnter() {}
+    internal virtual void OnStateEnter(TContext context) {}
 
-    internal abstract bool ProcessEvent(TEvent gameEvent, TData data,  out TState nextState);
+    internal abstract bool ProcessEvent(TEvent gameEvent, TData data, TContext context, out TState nextState);
 
-    internal virtual void OnStateExit() {}
+    internal virtual void OnStateExit(TContext context) {}
 }
 
 internal enum GameState

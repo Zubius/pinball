@@ -4,22 +4,17 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 internal class Ball : MonoBehaviour
 {
-    [SerializeField] private Transform cachedTransform;
-    [SerializeField] private Rigidbody cachedRigidbody;
+    private Rigidbody _cachedRigidbody;
 
     [SerializeField] internal BallType type = BallType.Simple;
 
     private void Awake()
     {
-        if (cachedTransform == null)
-            cachedTransform = transform;
-
-        if (cachedRigidbody == null)
-            cachedRigidbody = GetComponent<Rigidbody>();
+        _cachedRigidbody = GetComponent<Rigidbody>();
     }
 
     internal void Launch(float force)
     {
-        cachedRigidbody.AddForce(Vector3.forward * force);
+        _cachedRigidbody.AddForce(Vector3.forward * force);
     }
 }

@@ -1,23 +1,19 @@
 using CoreHapticsUnity;
 
-internal class StartGameState : BaseGameState
+internal sealed class StartGameState : BaseGameState
 {
     internal override GameState State => GameState.StartGame;
 
-    internal override void OnStateEnter()
+    internal override void OnStateEnter(IPinballContext context)
     {
-        CoreHapticsUnityProxy.LogLevel = LogsLevel.None;
-
-        GameController.Instance.ShowNewGameScreen(DataController.GameScoreController.TopScores);
-
-        DataController.CreateAndAssignTask(500, ScoreObjectType.Grouped);
+        context.SetNewGame();
     }
 
-    internal override bool ProcessEvent(GameEvent gameEvent, IInputContainer _, out GameState nextState)
+    internal override bool ProcessEvent(GameEvent gameEvent, IInputContainer _, IPinballContext context, out GameState nextState)
     {
         if (gameEvent == GameEvent.StartGame)
         {
-            GameController.Instance.StartGame();
+            context.PrepareLaunchBall();
             nextState = GameState.LaunchBall;
             return true;
         }

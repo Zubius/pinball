@@ -22,7 +22,7 @@ internal class LaunchBallController : MonoBehaviour
         }
     }
 
-    internal event Action<Ball> OnBallLaunched;
+    internal event Action OnBallLaunched;
 
     internal void LaunchBall(BallType type, float force)
     {
@@ -31,6 +31,6 @@ internal class LaunchBallController : MonoBehaviour
         ball.transform.position = launchPoint.position;
 
         ball.Launch(force * launchForceMultiply);
-        OnBallLaunched?.Invoke(ball);
+        OnBallLaunched?.Invoke();
     }
 }

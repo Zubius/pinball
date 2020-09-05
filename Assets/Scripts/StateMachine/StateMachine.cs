@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-internal class StateMachine
+internal sealed class StateMachine
 {
     private readonly Dictionary<GameState, BaseGameState> _states;
     private BaseGameState _currentState;
@@ -18,27 +18,27 @@ internal class StateMachine
 
     internal void Start()
     {
-        GoToState(GameState.StartGame);
+        GoToState(GameState.StartGame, null);
     }
 
-    internal void ProcessInput(GameEvent gameEvent, IInputContainer data)
+    internal void ProcessInput(GameEvent gameEvent, IInputContainer data, IPinballContext context)
     {
         Debug.Log($"Input Event: {gameEvent}, Data: {data}");
-        if (_currentState.ProcessEvent(gameEvent, data, out GameState nextState))
+        if (_currentState.ProcessEvent(gameEvent, data, context, out GameState nextState))
         {
-            GoToState(nextState);
+            GoToState(nextState, context);
         }
     }
 
-    private void GoToState(GameState toState)
+    private void GoToState(GameState toState, IPinballContext context)
     {
         if (_states.TryGetValue(toState, out var nextState))
         {
-            _currentState?.OnStateExit();
+            _currentState?.OnStateExit(context);
 
             _currentState = nextState;
             Debug.Log($"Enter state: {_currentState.State}");
-            _currentState.OnStateEnter();
+            _currentState.OnStateEnter(context);
         }
         else
         {

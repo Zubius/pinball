@@ -1,28 +1,19 @@
-internal class EndGameState : BaseGameState
+internal sealed class EndGameState : BaseGameState
 {
-    internal override void OnStateEnter()
+    internal override void OnStateEnter(IPinballContext context)
     {
-        DataController.GameScoreController.SaveScores();
-        GameController.Instance.ShowEndGameScreen(DataController.GameScoreController.TopScores,
-            DataController.GameScoreController.CurrentScores);
-        GameController.Instance.SetEndGame();
+        context.SetEndGame();
     }
 
-    internal override bool ProcessEvent(GameEvent gameEvent, IInputContainer _, out GameState nextState)
+    internal override bool ProcessEvent(GameEvent gameEvent, IInputContainer _, IPinballContext context, out GameState nextState)
     {
         if (gameEvent == GameEvent.Restart)
         {
-            Restart();
+            context.Restart();
         }
 
         nextState = GameState.None;
         return false;
-    }
-
-    private void Restart()
-    {
-        DataController.Dispose();
-        GameController.Instance.ReloadScene();
     }
 
     internal override GameState State => GameState.EndGame;

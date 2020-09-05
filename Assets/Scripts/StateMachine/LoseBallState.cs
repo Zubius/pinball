@@ -1,15 +1,15 @@
 using System;
 
-internal class LoseBallState : BaseGameState
+internal sealed class LoseBallState : BaseGameState
 {
     internal override GameState State => GameState.LoseBall;
 
-    internal override void OnStateEnter()
+    internal override void OnStateEnter(IPinballContext context)
     {
-        GameController.Instance.SetBallDropped();
+        context.HandleDroppedBall();
     }
 
-    internal override bool ProcessEvent(GameEvent gameEvent, IInputContainer _, out GameState nextState)
+    internal override bool ProcessEvent(GameEvent gameEvent, IInputContainer _, IPinballContext context, out GameState nextState)
     {
         nextState = GameState.None;
         switch (gameEvent)
@@ -17,7 +17,7 @@ internal class LoseBallState : BaseGameState
             case GameEvent.HandleBallDropped:
                 if (DataController.BallsController.BallsCount > 0)
                 {
-                    GameController.Instance.PlatNextBall();
+                    context.PrepareLaunchBall();
                     nextState = GameState.LaunchBall;
                 }
                 else

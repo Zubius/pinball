@@ -3,10 +3,10 @@ using UnityEngine;
 
 internal class DropBallController : MonoBehaviour
 {
-    internal event Action OnBallDropped;
+    internal event Action<GameObject> OnBallDropped;
 
     private void OnTriggerExit(Collider other)
     {
-        OnBallDropped?.Invoke();
+        OnBallDropped?.Invoke(other.gameObject);
     }
 }

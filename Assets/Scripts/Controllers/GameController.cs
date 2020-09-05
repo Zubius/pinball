@@ -1,8 +1,9 @@
 using System.Collections.Generic;
+using CoreHapticsUnity;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-internal class GameController : MonoBehaviour
+internal class GameController : MonoBehaviour, IPinballContext
 {
     [SerializeField] private DropBallController dropBallController;
     [SerializeField] private LaunchBallController launchBallController;
@@ -16,7 +17,6 @@ internal class GameController : MonoBehaviour
     internal static GameController Instance;
 
     private StateMachine _stateMachine;
-    private Ball _ball;
     private IInputSource _initInputSource;
     private AIInputHandler _aiController;
     private InputSourceController _inputSourceController;
@@ -78,7 +78,6 @@ internal class GameController : MonoBehaviour
         );
 
         dropBallController.OnBallDropped += OnBallDropped;
-        launchBallController.OnBallLaunched += OnBallLaunched;
 
         Init();
         InitInputSourceController(_initInputSource);
@@ -86,12 +85,12 @@ internal class GameController : MonoBehaviour
 
     private void OnScored(ScoreObjectArgs obj)
     {
-        _stateMachine.ProcessInput(GameEvent.AddScores, new ScoreInput(obj));
+        _stateMachine.ProcessInput(GameEvent.AddScores, new ScoreInput(obj), this);
     }
 
     private void OnGameScoreChanged()
     {
-        _stateMachine.ProcessInput(GameEvent.UpdateScores, null);
+        _stateMachine.ProcessInput(GameEvent.UpdateScores, null, this);
     }
 
     internal void PlatNextBall()
@@ -101,16 +100,90 @@ internal class GameController : MonoBehaviour
 
     internal void SetBallDropped()
     {
-        _stateMachine.ProcessInput(GameEvent.HandleBallDropped, null);
+        _stateMachine.ProcessInput(GameEvent.HandleBallDropped, null, this);
     }
 
-    internal void SetEndGame()
+    #region IPinballContext implementation
+
+    public void SetNewGame()
     {
+        CoreHapticsUnityProxy.LogLevel = LogsLevel.None;
+
+        ShowNewGameScreen(DataController.GameScoreController.TopScores);
+
+        DataController.CreateAndAssignTask(500, ScoreObjectType.Grouped);
+    }
+
+    public void SetNewRound()
+    {
+        UpdateBallsLeft(DataController.BallsController.BallsCount);
+        Instance.HideStartScreen();
+    }
+
+    public void PrepareLaunchBall()
+    {
+        PlatNextBall();
+    }
+
+    public void LaunchBall(BallType type, float holdDuration)
+    {
+        DataController.BallsController.DecrementBallsCount();
+        UpdateBallsLeft(DataController.BallsController.BallsCount);
+        LaunchBallInternal(type, holdDuration);
+    }
+
+    public void MoveFlipper(Side side, FlipperDirection direction)
+    {
+        if (direction == FlipperDirection.Up)
+            CoreHapticsUnityProxy.PlayTransient(0.5f, 1f);
+
+        switch (side)
+        {
+            case Side.Left:
+                MoveLeftFlipper(direction);
+                break;
+            case Side.Right:
+                MoveRightFlipper(direction);
+                break;
+        }
+    }
+
+    public void AddScore(int scores)
+    {
+        DataController.GameScoreController.AddScores(scores);
+        UpdateScores(DataController.GameScoreController.CurrentScores);
+
+        CoreHapticsUnityProxy.PlayTransient(0.5f, 1f);
+    }
+
+    public void CompleteTask(int taskId)
+    {
+        DataController.ScoreObjectController.RemoveTaskFromObjects(taskId);
+    }
+
+    public void HandleDroppedBall()
+    {
+        _stateMachine.ProcessInput(GameEvent.HandleBallDropped, null, this);
+    }
+
+    public void SetEndGame()
+    {
+        DataController.GameScoreController.SaveScores();
+        ShowEndGameScreen(DataController.GameScoreController.TopScores, DataController.GameScoreController.CurrentScores);
+
         if (uiController.AIToggleIsON)
         {
             _inputSourceController.SetSingleSource(_initInputSource);
         }
     }
+
+    public void Restart()
+    {
+        DataController.Dispose();
+        ReloadScene();
+    }
+
+    #endregion
 
     internal void ScoreObject(int id, int scores, int? taskId)
     {
@@ -118,7 +191,7 @@ internal class GameController : MonoBehaviour
 
     }
 
-    internal void LaunchBall(BallType type, float force)
+    internal void LaunchBallInternal(BallType type, float force)
     {
         launchBallController.LaunchBall(type, force);
     }
@@ -191,22 +264,22 @@ internal class GameController : MonoBehaviour
 
     private void InputSourceControllerOnOnRestartPressed()
     {
-        _stateMachine.ProcessInput(GameEvent.Restart, null);
+        _stateMachine.ProcessInput(GameEvent.Restart, null, this);
     }
 
     private void InputSourceControllerOnOnFlipperAction(Side arg1, FlipperDirection arg2)
     {
-        _stateMachine.ProcessInput(GameEvent.MoveFlipper, new FlipperInput(arg1, arg2));
+        _stateMachine.ProcessInput(GameEvent.MoveFlipper, new FlipperInput(arg1, arg2), this);
     }
 
     private void InputSourceControllerOnOnLaunchReleased(float obj)
     {
-        _stateMachine.ProcessInput(GameEvent.LaunchBall, new LaunchInput(obj));
+        _stateMachine.ProcessInput(GameEvent.LaunchBall, new LaunchInput(obj), this);
     }
 
     private void InputSourceControllerOnOnStartPressed()
     {
-        _stateMachine.ProcessInput(GameEvent.StartGame, null);
+        _stateMachine.ProcessInput(GameEvent.StartGame, null, this);
     }
 
     #endregion
@@ -216,22 +289,14 @@ internal class GameController : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
-    private void OnBallDropped()
+    private void OnBallDropped(GameObject ball)
     {
-        if (_ball != null)
-        {
-            Destroy(_ball.gameObject);
-        }
+        Destroy(ball);
 
-        _stateMachine.ProcessInput(GameEvent.DropBall, null);
+        _stateMachine.ProcessInput(GameEvent.DropBall, null, this);
     }
 
-    private void OnBallLaunched(Ball ball)
-    {
-        _ball = ball;
-    }
-
-    internal void StartGame()
+    private void StartGame()
     {
         if (uiController.AIToggleIsON)
         {
